@@ -1,0 +1,13 @@
+.tab_menu{display:block;width:100%;background-color:#fff}
+.tab_menu:after,.tab_menu:before{display:table;content:' ';clear:both}
+.tab_menu.grey{background-color:#fbfbfa}
+.tab_menu .tab{background:0 0;-webkit-tap-highlight-color:transparent;cursor:pointer;border:0;padding:.75rem;font-size:.85rem;line-height:20px;color:#9e9ea6;display:inline-block;text-align:center;float:left;transition:box-shadow 125ms ease-out;box-shadow:inset 0 -4px 0 0 transparent}
+.tab_menu .tab .ts_icon:before{vertical-align:top}
+.tab_menu .tab:hover{box-shadow:inset 0 -4px 0 0 #b2d5c9}
+.tab_menu .tab.active,.tab_menu .tab:active,.tab_menu .tab:focus{outline:0;color:#555459;box-shadow:inset 0 -4px 0 0 #2ab27b}
+.tab_menu .tab:disabled{cursor:not-allowed;color:#babbbf}
+.tab_panels .panel{width:100%;display:none}
+.tab_panels .panel.active{display:block}
+@media screen and (min-width:30rem){.tab_menu.even_2 .tab{width:50%}
+.tab_menu.even_3 .tab,.tab_menu.even_4 .tab{width:33.33%}
+}

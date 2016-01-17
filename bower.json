@@ -1,0 +1,22 @@
+{
+  "name": "Tutu",
+  "version": "1.0.0",
+  "authors": [
+    "Shizhz <messi.shizz@gmail.com>"
+  ],
+  "description": "Do Ops with Chat",
+  "main": "index.html",
+  "license": "MIT",
+  "homepage": "https://github.com/shizhz/tutu",
+  "dependencies": {
+    "bootstrap": "~3.3.6"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "private": true
+}

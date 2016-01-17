@@ -1,0 +1,11 @@
+@font-face{font-family:appleLogo;src:local("Lucida Grande");unicode-range:U+F8FF}
+.tiny{font-size:.7rem}
+.small{font-size:.9rem}
+.mini_file_profile{position:relative;top:50%;-webkit-transform:translateY(-50%);-moz-transform:translateY(-50%);-ms-transform:translateY(-50%);transform:translateY(-50%);display:-webkit-flex;display:-ms-flexbox;display:flex;height:37px}
+.mini_file_profile .thumbnail{width:37px;height:37px;border-radius:5px}
+.mini_file_profile .meta_data{-ms-flex:1 1 auto;-webkit-flex:1 1 auto;flex:1 1 auto;margin-left:10px;font-size:13px;line-height:1pc;color:#a0a0a2}
+.mini_file_profile .author,.mini_file_profile .title{font-weight:900}
+.mini_file_profile .author .member{color:#a0a0a2!important;pointer-events:none}
+.mini_file_profile .title{font-size:15px;line-height:20px;color:#2c2d30}
+.mini_file_profile .bullet{margin:0 1px;color:#e1e1e1}
+.external_link{position:relative;top:50%;-webkit-transform:translateY(-50%);-moz-transform:translateY(-50%);-ms-transform:translateY(-50%);transform:translateY(-50%);font-size:15px;line-height:20px;width:calc(100% - 252px);display:inline-block}

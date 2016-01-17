@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" class="supports_line_clamp supports_flexbox no_touch">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="referrer" content="no-referrer">
+        <meta name="superfish" content="nofish">
+        <meta charset="utf-8">
+        <title>Tutu | A Smart Dog</title>
+        <meta name="msapplication-TileColor" content="#FFFFFF">
+        <link href="../static/css/3rd-css-all.css" rel="stylesheet" type="text/css"/>
+        <link href="../static/css/chatops.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body class="no_attachment_max_width light_theme">
+        <div id="client-ui" class="container-fluid feature_dnd_client sidebar_theme_default">
+            <div id="header">
+                <div id="channel_header">
+                    <div id="team_menu" data-qa="team_menu_selector">
+                        <div class="team_name_container top_margin">
+                            <span id="team_name" class="overflow_ellipsis">TUTU</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="footer" style="bottom: 0px;">
+                <div id="footer_msgs">
+                    <div id="messages-input-container" class="" style="height: 42px;">
+                        <a id="primary_file_button" class="file_upload_btn" style="height: 42px;">
+                        </a>
+                        <form id="message-form" style="height: 42px;">
+                            <textarea id="message-input" maxlength="" style="overflow-y: hidden; height: 38px;" autocorrect="off" autocomplete="off" spellcheck="true"></textarea>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="client_body">
+                <div id="col_messages">
+                    <div class="row-fluid">
+                        <div id="col_channels_bg" style="height: 1052px; top: 0px; z-index: 0;"></div>
+                        <div id="col_channels" class="show_presence channels_list_holder no_just_unreads">
+                            <div id="monkey_scroll_wrapper_for_channels_scroller" class="monkey_scroll_wrapper ">
+                                <div id="quick_switcher_btn"></div>
+                            </div>
+                            <div id="messages_container">
+                                <div id="monkey_scroll_wrapper_for_msgs_scroller_div" class="monkey_scroll_wrapper ">
+                                    <div class="monkey_scroll_hider  scrolling" style="width: 1684px; margin-right: 17px;">
+                                        <div id="msgs_scroller_div" tabindex="1" style="height: 935px; width: 1696px;" class="monkey_scroller">
+                                            <div id="msgs_div" class="msgs_holder">
+                                                <ts-message class="message first">
+                                                    <div class="message_gutter">
+                                                        <div class="message_icon">
+                                                            <a href="#" class="member_preview_link member_image thumb_36 user_icon"></a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="message_content">
+                                                        <a href="#" class="message_sender member member_preview_link">You</a>
+                                                        <span class="message_body">help logs</span>
+                                                    </div>
+                                                </ts-message>
+                                                <ts-message class="message feature_fix_files first">
+                                                    <div class="message_gutter">
+                                                        <div class="message_icon">
+                                                            <a href="#" class="member_preview_link member_image thumb_36 tutu_icon" aria-hidden="true"></a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="message_content">
+                                                        <a href="#" class="message_sender member member_preview_link">Tutu</a>
+                                                        <span class="message_body">Sorry, I don't know how to help you with "logs". Please type <code class="special_formatting"><span class="copyonly">`</span>/help<span class="codecopyonly copyonly">`</span></code> for details of how I can help you.</span>
+                                                    </div>
+                                                </ts-message>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
