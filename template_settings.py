@@ -7,7 +7,7 @@ logger = logging.getLogger('tutu.' + __name__)
 
 class Jinja2TemplateRender(object):
     def render_template(self, temp_name, **kwargs):
-        logger.debug("Rendering with jinja2 template engine")
+        logger.debug("Rendering %s with jinja2 template engine", temp_name)
         env = Environment(loader=FileSystemLoader([template_root]))
         try:
             template = env.get_template(temp_name)
