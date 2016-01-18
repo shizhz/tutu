@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # This is a copy of the Python logging.config.dictconfig module. It is provided
 # here for backwards compatibility for Python versions prior to 2.7.
 import logging.handlers

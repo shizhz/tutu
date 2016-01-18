@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 import tornado
 import tornado.template
@@ -43,7 +45,7 @@ settings['debug'] = DEPLOYMENT != DeploymentType.PRODUCTION or options.debug
 settings['static_path'] = STATIC_ROOT
 settings['cookie_secret'] = "V9d/0twNZFWgCHWO5O13/qC2dj2XPajP2GYxzKn0VYO1lB3PuTiPRGH47IXUchM2tU4="
 settings['xsrf_cookies'] = True
-settings['template_loader'] = tornado.template.Loader(TEMPLATE_ROOT)
+# settings['template_loader'] = tornado.template.Loader(TEMPLATE_ROOT)
 
 SYSLOG_TAG = "tutu"
 SYSLOG_FACILITY = logging.handlers.SysLogHandler.LOG_LOCAL2

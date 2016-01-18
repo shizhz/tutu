@@ -60,3 +60,4 @@ target/
 bower_components
 node_modules
 static/css/*.css
+.tern-port

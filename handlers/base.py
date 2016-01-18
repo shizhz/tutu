@@ -1,11 +1,15 @@
+# -*- coding: utf-8 -*-
+
 import json
 import tornado.web
 
 import logging
+from template_settings import Jinja2TemplateRender
+
 logger = logging.getLogger('tutu.' + __name__)
 
 
-class BaseHandler(tornado.web.RequestHandler):
+class BaseHandler(tornado.web.RequestHandler, Jinja2TemplateRender):
     """A class to collect common handler methods - all other handlers should
     subclass this one.
     """
@@ -43,3 +47,6 @@ class BaseHandler(tornado.web.RequestHandler):
         arg = self.request.arguments[name]
         logger.debug("Found '%s': %s in JSON arguments" % (name, arg))
         return arg
+
+    def render_jinja2(self, temp_name, **kwargs):
+        self.write(self.render_template(temp_name, **kwargs))
