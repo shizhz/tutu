@@ -3,7 +3,10 @@
 from sh import ShCommandParser
 
 class CommandParser(object):
-    parsers = [ShCommandParser]
+    parsers = [ShCommandParser()]
+
+    def __init__(self, parsers):
+        self.parsers = parsers
 
     def parse(self, text):
         txt = text.strip().lower()

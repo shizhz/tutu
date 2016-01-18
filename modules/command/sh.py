@@ -17,4 +17,13 @@ class ShCommandParser(object):
         marathon_app_id = cmd_segs[1]
         remote_cmd = cmd_segs[2:]
 
-        return CommandInfo(cmd, marathon_app_id=marathon_app_id, remote_cmd=remote_cmd)
+        return CommandInfo(cmd, marathon_app_id=marathon_app_id, remote_cmd=remote_cmd, help=self.help())
+
+    def help(self):
+        return """
+        NAME: sh - execute shell command within application container on remote machine
+        SYNOPSIS: sh <marathin_app_id> <raw bash command>
+        DESC: execute shell within the specified application container and get the result, the target container will be found by marathon_app_id.\n
+        E.G. sh dev-some-service ls /opt/logs
+             sh dev-some-service tail -n 200 /opt/logs/out.log
+        """

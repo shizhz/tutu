@@ -23,3 +23,4 @@ class TestSh(unittest.TestCase):
         assert cmd_info.command == 'sh'
         assert cmd_info.marathon_app_id == 'dev-member-web'
         assert cmd_info.remote_cmd == ['ls', '/opt']
+        assert cmd_info.help is not None and 'sh' in cmd_info.help
