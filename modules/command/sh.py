@@ -14,8 +14,8 @@ class ShCommandParser(object):
         """
         cmd_segs = text.split()
         cmd = cmd_segs[0]
-        marathon_app_id = cmd_segs[1]
-        remote_cmd = cmd_segs[2:]
+        marathon_app_id = cmd_segs[1] if len(cmd_segs) >= 2 else None
+        remote_cmd = cmd_segs[2:] if len(cmd_segs) >= 3 else None
 
         return CommandInfo(cmd, marathon_app_id=marathon_app_id, remote_cmd=remote_cmd, help=self.help())
 

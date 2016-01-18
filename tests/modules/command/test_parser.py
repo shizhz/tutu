@@ -12,7 +12,7 @@ class MockParser(object):
 
 class TestCommandParser(unittest.TestCase):
     def setUp(self):
-        self.cmd_parser = CommandParser([MockParser()])
+        self.cmd_parser = CommandParser(parsers=[MockParser()])
 
     def tearDown(self):
         self.cmd_parser = None

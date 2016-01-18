@@ -5,7 +5,7 @@ from sh import ShCommandParser
 class CommandParser(object):
     parsers = [ShCommandParser()]
 
-    def __init__(self, parsers):
+    def __init__(self, parsers=parsers):
         self.parsers = parsers
 
     def parse(self, text):
