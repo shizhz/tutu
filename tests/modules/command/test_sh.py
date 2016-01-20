@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from modules.command.sh import ShCommandParser
-from modules.command.models import CommandInfo
+from modules.command.cmd_sh import ShCommandParser
 
 class TestSh(unittest.TestCase):
     def setUp(self):
@@ -17,10 +16,29 @@ class TestSh(unittest.TestCase):
     def test_support_false(self):
         assert self.sh_command_parser.support('non-sh dev-member-web ls /opt') == False
 
-    def test_parse_sh_cmd(self):
+    def test_parse_sh_cmd_without_env_option(self):
         text = "sh dev-member-web ls /opt"
-        cmd_info = self.sh_command_parser.parse(text)
-        assert cmd_info.command == 'sh'
-        assert cmd_info.marathon_app_id == 'dev-member-web'
-        assert cmd_info.remote_cmd == ['ls', '/opt']
-        assert cmd_info.help is not None and 'sh' in cmd_info.help
+        cmd_sh = self.sh_command_parser.parse(text)
+
+        assert cmd_sh.name == 'sh'
+        assert cmd_sh.env == 'dev'
+        assert cmd_sh.marathon_app_id == 'dev-member-web'
+        assert cmd_sh.sh == ['ls', '/opt']
+
+    def test_parse_sh_cmd_with_short_env_option(self):
+        text = "sh -e dev member-web ls /opt"
+        cmd_sh = self.sh_command_parser.parse(text)
+
+        assert cmd_sh.name == 'sh'
+        assert cmd_sh.env == 'dev'
+        assert cmd_sh.marathon_app_id == 'member-web'
+        assert cmd_sh.sh == ['ls', '/opt']
+
+    def test_parse_sh_cmd_with_long_env_option(self):
+        text = "sh --env dev member-web ls /opt"
+        cmd_sh = self.sh_command_parser.parse(text)
+
+        assert cmd_sh.name == 'sh'
+        assert cmd_sh.env == 'dev'
+        assert cmd_sh.marathon_app_id == 'member-web'
+        assert cmd_sh.sh == ['ls', '/opt']

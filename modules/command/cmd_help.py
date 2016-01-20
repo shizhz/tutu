@@ -7,8 +7,11 @@ from models import CommandInfo
 class HelpCommand(Command):
     """
     NAME: help - get help info for specified command
+
     SYNOPSIS: help <command>
+
     DESC: get help info for specified command, about how to use it and what it's used for.
+
     E.G. help help
          help sh
     """
