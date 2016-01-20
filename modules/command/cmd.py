@@ -46,3 +46,15 @@ def validator(fn):
 
         return True
     return w
+
+def cmd_indicator(command):
+    def indicator(txt):
+        cmd = txt.split()[0]
+        alias = command.alias or []
+        name = command.name
+
+        valid_names = alias.append(name)
+
+        return cmd in valid_names
+
+    return indicator

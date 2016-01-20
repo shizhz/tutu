@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from cmd import Command, CommandContext, validator
+from cmd import Command, CommandContext, validator, cmd_indicator
 from cmd_sh import ShCommand
 from models import CommandInfo
 
@@ -26,20 +26,19 @@ class HelpCommand(Command):
             return cmds.get(self.target_cmd) or self._cmd_notfound()
 
 class HelpCommandParser(object):
-    def support(self, text):
-        return text.startswith('help')
+    support = cmd_indicator(HelpCommand)
 
     @validator
     def is_valid(self, txt):
-        return txt.startswith('help') and len(txt.split()) > 1
+        return self.support(txt) and len(txt.split()) > 1
 
-    def parse(self, text):
+    def parse(self, txt):
         """
         help command should be the format like:
         - help sh
         - help show
         """
-        target_cmd = text.split()[1]
+        target_cmd = txt.split()[1]
         return HelpCommand(target_cmd)
 
 class HelpCommandContext(CommandContext):
