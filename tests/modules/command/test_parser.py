@@ -2,10 +2,12 @@
 import unittest
 from nose.tools import raises
 
+from modules.command.cmd import validator
 from modules.command.parser import CommandParser
 from modules.command.exceptions import UnknownCommandException, InvalidCommandException
 
 class MockParser(object):
+    @validator
     def is_valid(self, cmd):
         return True
 
@@ -15,7 +17,8 @@ class MockParser(object):
     def parse(self, txt):
         return "MockCommandInfo"
 
-class MockNotValidParser(object):
+class MockNotValidParser(MockParser):
+    @validator
     def is_valid(self, cmd):
         return False
 

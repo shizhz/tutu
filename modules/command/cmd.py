@@ -43,4 +43,6 @@ def validator(fn):
 
         if not fn(args[0], txt.strip()):
             raise InvalidCommandException(txt)
+
+        return True
     return w

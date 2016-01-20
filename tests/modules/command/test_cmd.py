@@ -26,7 +26,7 @@ def test_validator_invalid_parameter():
     mock_is_valid_pass(None, None)
 
 def test_validator_pass():
-    mock_is_valid_pass(None, "some string does not matter")
+    assert mock_is_valid_pass(None, "some string does not matter") is True
 
 @raises(InvalidCommandException)
 def test_validator_not_pass():
