@@ -24,7 +24,7 @@ class CommandContext(object):
         return self.enter() # define method `enter` in all subclass
 
     def __exit__(self, type, value, traceback):
-        self.exit(self, type, value, traceback) # define method `exit` in all subclass
+        self.exit(type, value, traceback) # define method `exit` in all subclass
 
 def validator(fn):
     """
@@ -48,13 +48,12 @@ def validator(fn):
     return w
 
 def cmd_indicator(command):
-    def indicator(txt):
+    def indicator(ins, txt):
         cmd = txt.split()[0]
         alias = command.alias or []
-        name = command.name
 
-        valid_names = alias.append(name)
+        alias.append(command.name)
 
-        return cmd in valid_names
+        return cmd in alias
 
     return indicator

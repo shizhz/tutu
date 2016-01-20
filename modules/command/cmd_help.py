@@ -45,7 +45,7 @@ class HelpCommandContext(CommandContext):
     all_commands = [ShCommand, HelpCommand]
 
     def enter(self):
-        return dict(map(lambda cmd: [cmd.name, cmd.help_info], all_commands))
+        return dict(map(lambda cmd: [cmd.name, cmd.help_info()], self.all_commands))
 
     def exit(self, type, value, traceback):
         pass
