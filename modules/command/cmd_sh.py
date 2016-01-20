@@ -76,3 +76,16 @@ class ShCommandParser(object):
         marathon_app_id = self.parse_marathon_app_id(txt)
         sh = self.parse_remote_sh(txt)
         return ShCommand(env, marathon_app_id, sh)
+
+class ShCommandContext(CommandContext):
+    def __init__(self, env, marathon_app_id):
+        self.env = env
+        self.marathon_app_id = marathon_app_id
+
+    def enter(self):
+        # TODO: Return a open connection to remote machine
+        return self
+
+    def exit(self, type, value, traceback):
+        # TODO: Close connection
+        pass
