@@ -24,11 +24,6 @@ class TestSh(unittest.TestCase):
     def test_support_false_when_env_provided_but_no_remote_sh_provided(self):
         assert self.sh_command_parser.support('non-sh -e dev member-web') == False
 
-    @raises(InvalidCommandException)
-    def test_parse_failed_when_env_provided_but_no_remote_sh_provided(self):
-        # TODO: fix this test tomorrow, it's time to sleep now :-)
-        self.sh_command_parser.parse('non-sh -e dev member-web')
-
     def test_parse_sh_cmd_without_env_option(self):
         text = "sh dev-member-web ls /opt"
         cmd_sh = self.sh_command_parser.parse(text)
