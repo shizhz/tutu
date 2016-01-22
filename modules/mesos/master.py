@@ -20,7 +20,7 @@ import mesos.interface.mesos_pb2
 
 from .. import log
 
-from . import exceptions, framework, mesos_file, slave, task, util, zk
+from . import exceptions, framework, slave, task, util, zookeeper
 
 ZOOKEEPER_TIMEOUT = 1
 
@@ -61,7 +61,7 @@ class MesosMaster(object):
         hosts, path = cfg[5:].split("/", 1)
         path = "/" + path
 
-        with zk.client(hosts=hosts, read_only=True) as zk:
+        with zookeeper.client(hosts=hosts, read_only=True) as zk:
             try:
                 def master_id(key):
                     return int(key.split("_")[-1])
@@ -203,5 +203,3 @@ class MesosMaster(object):
         if not active_only:
             keys.append("completed_frameworks")
         return list(map(lambda x: framework.Framework(x), self._framework_list(active_only)))
-
-CURRENT = MesosMaster()
