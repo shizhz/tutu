@@ -13,7 +13,6 @@ class Tutu(tornado.web.Application):
     def __init__(self):
         tornado.web.Application.__init__(self, url_patterns, **settings)
 
-
 def main():
     app = Tutu()
     http_server = tornado.httpserver.HTTPServer(app)

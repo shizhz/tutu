@@ -35,7 +35,7 @@ MULTIPLE_SLAVES = "There are multiple slaves with that id. Please choose one: "
 
 
 class MesosMaster(object):
-    reponse_timeout = 10
+    response_timeout = 10
 
     def __init__(self, host):
         self.host = host

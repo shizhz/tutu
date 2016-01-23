@@ -4,12 +4,14 @@
   "authors": [
     "Shizhz <messi.shizz@gmail.com>"
   ],
-  "description": "Do Ops with Chat",
+  "description": "Do Ops by Chat",
   "main": "index.html",
   "license": "MIT",
   "homepage": "https://github.com/shizhz/tutu",
   "dependencies": {
-    "bootstrap": "~3.3.6"
+      "bootstrap": "~3.3.6",
+      "underscore": "1.8.3",
+      "intercooler-js": "0.9.3"
   },
   "ignore": [
     "**/.*",

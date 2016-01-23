@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from handler.base import BaseHandler
+from handlers.base import BaseHandler
 
 class CommandHandler(BaseHandler):
     """

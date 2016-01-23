@@ -17,3 +17,9 @@ class TestMesosMaster(unittest.TestCase):
         leader = self.mesos_master.resolve(mesos_zk)
 
         assert leader == '127.0.0.1:5050'
+
+    def test_frameworks(self):
+        mesos_zk = 'zk://localhost:2181/mesos'
+        frameworks = self.mesos_master.frameworks()
+
+        assert len(frameworks) == 1
