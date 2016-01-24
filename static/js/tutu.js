@@ -21,7 +21,7 @@ var Tutu = Tutu || (function() {
         };
     };
 
-    var states = ['help', 'sh', 'list'];
+    var states = ['help', 'sh', 'list', 'a-very-long-name-here-what-ganna-happen?'];
 
     function initHotkeyBindings() {
         var msg_box = $('message-input');
