@@ -41,8 +41,7 @@ var Tutu = Tutu || (function() {
         });
     }
 
-    function init() {
-
+    function initTypeahead() {
         $('.typeahead').typeahead({
             hint: true,
             highlight: true,
@@ -54,16 +53,17 @@ var Tutu = Tutu || (function() {
             name: 'commands',
             source: substringMatcher(states)
         });
+    }
 
-        initHotkeyBindings();
+    function initFocus() {
         $('#message-input').focus();
     }
 
     $(function() {
-        init();
+        initTypeahead();
+        initHotkeyBindings();
+        initFocus();
     });
-
-    window.Tutu = this;
 
     // API
     return {};
