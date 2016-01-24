@@ -1,13 +1,13 @@
 {
   "name": "Tutu",
   "version": "1.0.0",
-  "description": "Do Ops with Chat",
+  "description": "Do Ops by Chat",
   "main": "gulpfile.js",
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-load-plugins": "^1.1.0",
-      "gulp-sass": "^2.1.0"
+    "gulp-sass": "^2.1.0"
   },
   "scripts": {
     "start": "gulp",

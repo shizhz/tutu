@@ -23,21 +23,9 @@ var Tutu = Tutu || (function() {
 
     var states = ['help', 'sh', 'list'];
 
-
-    function init() {
-        var msg_box = $('#message-input');
+    function initHotkeyBindings() {
+        var msg_box = $('message-input');
         var msg_form = $('#message-form')[0];
-        msg_box.focus();
-
-        msg_box.typeahead({
-            hint: true,
-            highlight: true,
-            minLength: 1
-        }, {
-            name: 'commands',
-            source: substringMatcher(states)
-        });
-
         Mousetrap.bindGlobal('?', function() {
             msg_box.val('hot key bound');
         });
@@ -51,6 +39,24 @@ var Tutu = Tutu || (function() {
             var cmd = msg_box.val();
             console.log(cmd);
         });
+    }
+
+    function init() {
+
+        $('.typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 1,
+            menuConfig: {
+                position: 'top'
+            }
+        }, {
+            name: 'commands',
+            source: substringMatcher(states)
+        });
+
+        initHotkeyBindings();
+        $('#message-input').focus();
     }
 
     $(function() {

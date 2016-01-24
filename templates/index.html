@@ -23,14 +23,8 @@
                 </div>
             </div>
             <div id="footer" style="bottom: 0px;">
-                <div id="footer_msgs">
-                    <div id="messages-input-container" class="" style="height: 42px;">
-                        <a id="primary_file_button" class="file_upload_btn" style="height: 42px;">
-                        </a>
-                        <form id="message-form" style="height: 42px;">
-                            <textarea id="message-input" maxlength="" style="overflow-y: hidden; height: 38px;" ></textarea>
-                        </form>
-                    </div>
+                <div id="message-box">
+                    <input type="text" id="message-input" class="typeahead" style="overflow-y: hidden; height: 38px;" ></input>
                 </div>
             </div>
             <div id="client_body">
@@ -83,7 +77,6 @@
     <script src="/static/bower_components/underscore/underscore-min.js"></script>
     <script src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/static/bower_components/intercooler-js/src/intercooler.js"></script>
-    <script src="/static/bower_components/jquery.hotkeys/jquery.hotkeys.js"></script>
     <script src="/static/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
     <script src="/static/js/mousetrap.min.js"></script>
     <script src="/static/js/mousetrap-global-bind.min.js"></script>

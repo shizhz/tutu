@@ -12,7 +12,7 @@
       "bootstrap": "~3.3.6",
       "underscore": "1.8.3",
       "intercooler-js": "0.9.3",
-      "typeahead.js": "0.11.1"
+      "typeahead.js": "shizhz/typeahead.js"
   },
   "ignore": [
     "**/.*",

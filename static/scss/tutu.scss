@@ -1,3 +1,15 @@
+$color-white: #fff;
+$tt-color-blue: #0097cf;
+@mixin tt-basic {
+    height: 30px;
+    padding: 8px 12px;
+    font-size: 24px;
+    line-height: 30px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+}
+
 #team_name {
     color: #BFB6b6;
 }
@@ -8,4 +20,67 @@ a.user_icon {
 
 a.tutu_icon {
     background-image: url('/static/images/tutu.png');
+}
+
+#message-box {
+    margin-left: 20px;
+    font: normal normal normal 18px/1.2 "Helvetica Neue", Roboto, "Segoe UI", Calibri, sans-serif;
+    color: #292f33;
+    width: 90%;
+    input:focus {
+        border: 2px solid #E0E0E0;
+    }
+    input:hover {
+        border: 2px solid #E0E0E0;
+    }
+    span.twitter-typeahead {
+        width: 90%;
+    }
+}
+.typeahead {
+    @include tt-basic;
+    background-color: $color-white;
+    :focus {
+        border: 2px solid #E0E0E0;
+    }
+}
+
+.tt-query {
+    @include tt-basic;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+.tt-hint {
+    @include tt-basic;
+    color: #999;
+}
+
+.tt-menu {
+    text-align: left;
+    width: 422px;
+    margin: 12px 0;
+    padding: 8px 0;
+    background-color: $color-white;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.tt-suggestion {
+    padding: 3px 20px;
+    font-size: 18px;
+    line-height: 24px;
+    :hover {
+        cursor: pointer;
+        color: $color-white;;
+        background-color: $tt-color-blue;
+    }
+    p {
+        margin: 0;
+    }
+}
+
+.tt-suggestion.tt-cursor {
+    color: $color-white;
+    background-color: $tt-color-blue;
 }
