@@ -24,20 +24,15 @@ var Tutu = Tutu || (function() {
     var states = ['help', 'sh', 'list', 'a-very-long-name-here-what-ganna-happen?'];
 
     function initHotkeyBindings() {
-        var msg_box = $('message-input');
-        var msg_form = $('#message-form')[0];
-        Mousetrap.bindGlobal('?', function() {
-            msg_box.val('hot key bound');
-        });
+        var msg_box = $('#message-input')[0];
 
-        Mousetrap(msg_form).bind('/', function(e) {
-            if (e.preventDefault) {
-                e.preventDefault();
-            } else {
-                e.returnValue = false;
+        Mousetrap(msg_box).bind('enter', function(e) {
+            var suggestion_menu_visible = $('div.tt-menu').is(":visible");
+            if(suggestion_menu_visible) {
+                console.log("menu is visible, ignore logic here");
+                return false;
             }
-            var cmd = msg_box.val();
-            console.log(cmd);
+            console.log('# TODO: submit the command');
         });
     }
 
@@ -60,8 +55,8 @@ var Tutu = Tutu || (function() {
     }
 
     $(function() {
-        initTypeahead();
         initHotkeyBindings();
+        initTypeahead();
         initFocus();
     });
 
