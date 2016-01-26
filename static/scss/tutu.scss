@@ -36,7 +36,13 @@ a.tutu_icon {
     span.twitter-typeahead {
         width: 90%;
     }
+    .suggestion-menu {
+        margin: 0 20px 5px 20px;
+        padding: 3px 0;
+        border-bottom: 1px solid #ccc;
+    }
 }
+
 .typeahead {
     @include tt-basic;
     background-color: $color-white;
@@ -62,7 +68,7 @@ a.tutu_icon {
     background-color: $color-white;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 8px;
-    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 }
 
 .tt-suggestion {
@@ -71,7 +77,8 @@ a.tutu_icon {
     line-height: 24px;
     :hover {
         cursor: pointer;
-        color: $color-white;;
+        color: $color-white;
+        ;
         background-color: $tt-color-blue;
     }
     p {
