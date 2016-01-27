@@ -1,25 +1,31 @@
 var Tutu = Tutu || (function() {
-    function removeSuggestionMenu() {
-        var cmdSegs = $('#mesage-input').val().split();
-        var suggestions = $('div.tt-menu div.tt-suggestion>strong');
-        if(suggestions.length == 1) {
-            var lastCmdSeg = cmdSegs[cmdSegs.length - 1];
-            var suggestion = lastCmdSeg == suggestions.text();
-            // TODO: select it
+    function suggestion_menu_visible() {
+        return $('div.tt-menu').is(":visible");
+    }
+
+    function removeSuggestionMenu(e) {
+        if (suggestion_menu_visible()) {
+            var suggestions = $('div.tt-menu div.tt-suggestion');
+            var cmdSegs = $('#message-input').val().split();
+
+            if(suggestions.length == 1) {
+                var lastCmdSeg = $.trim(cmdSegs[cmdSegs.length - 1]);
+                var suggestion = $.trim(suggestions.text());
+                if (lastCmdSeg == suggestion) {
+                    $('.typeahead').typeahead('val', suggestion);
+                    $('.typeahead').typeahead('close');
+                }
+            }
         }
     }
 
     function initHotkeyBindings() {
         var msg_box = $('#message-input')[0];
-
         Mousetrap(msg_box).bind('enter', function(e) {
-            var suggestion_menu_visible = $('div.tt-menu').is(":visible");
             removeSuggestionMenu();
-            if (suggestion_menu_visible) {
+            if (!suggestion_menu_visible()) {
                 console.log("menu is visible, ignore logic here");
-                return false;
             }
-            console.log('# TODO: submit the command');
         });
     }
 
