@@ -32,7 +32,14 @@ var Tutu = Tutu || (function() {
     function initTypeahead() {
         var commands = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            queryTokenizer: function(str) {
+                if (str.endsWith(' ')) {
+                    // don't show menu when enter whitespace
+                    return ['_impossible_token_'];
+                }
+                // Only return the last word as query token
+                return [].slice.call($.trim(str).split(/\W+/), -1);
+            },
             prefetch: '/api/commands'
         });
 
