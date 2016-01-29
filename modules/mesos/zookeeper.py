@@ -10,7 +10,7 @@ import kazoo.handlers.threading
 
 from .. import log
 
-TIMEOUT = 1
+TIMEOUT = 30
 
 # Helper for testing
 client_class = kazoo.client.KazooClient
@@ -20,7 +20,7 @@ def client(*args, **kwargs):
     zk = client_class(*args, **kwargs)
     try:
         zk.start(timeout=TIMEOUT)
-    except kazoo.handlers.threading.TimeoutError:
+    except kazoo.handlers.threading.KazooTimeoutError:
         log.fatal(
             "Could not connect to zookeeper. " +
             "Change your config via `mesos config master`")
