@@ -3,16 +3,22 @@ var Tutu = Tutu || (function() {
         return $('div.tt-menu').is(":visible");
     }
 
+    function buildSuggestionCmd(rawInput, suggestion) {
+        var cmdSegs = rawInput.split(/\W+/);
+        return [].slice.call(cmdSegs, 0, -1).concat([suggestion]).join(' ');
+    }
+
     function removeSuggestionMenu(e) {
         if (suggestion_menu_visible()) {
             var suggestions = $('div.tt-menu div.tt-suggestion');
-            var cmdSegs = $('#message-input').val().split();
+            var rawInput = $('#message-input').val();
+            var cmdSegs = rawInput.split(/\W+/);
 
             if(suggestions.length == 1) {
                 var lastCmdSeg = $.trim(cmdSegs[cmdSegs.length - 1]);
                 var suggestion = $.trim(suggestions.text());
                 if (lastCmdSeg == suggestion) {
-                    $('.typeahead').typeahead('val', suggestion);
+                    $('.typeahead').typeahead('val', buildSuggestionCmd(rawInput, suggestion));
                     $('.typeahead').typeahead('close');
                 }
             }
@@ -30,6 +36,17 @@ var Tutu = Tutu || (function() {
     }
 
     function initTypeahead() {
+        var initTabKeyed = function() {
+            var rawInput;
+            $('.typeahead').bind('typeahead:beforeselect typeahead:beforeautocomplete', function(e, suggestion) {
+                rawInput = $('#message-input').val();
+            });
+
+            $('.typeahead').bind('typeahead:select typeahead:autocomplete', function(e, suggestion) {
+                $('.typeahead').typeahead('val', buildSuggestionCmd(rawInput, suggestion.name));
+            });
+        };
+
         var commands = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
             queryTokenizer: function(str) {
@@ -42,6 +59,8 @@ var Tutu = Tutu || (function() {
             },
             prefetch: '/api/commands'
         });
+
+        initTabKeyed();
 
         $('.typeahead').typeahead({
                 hint: true,
