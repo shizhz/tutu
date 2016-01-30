@@ -26,7 +26,7 @@ class ShCommand(Command):
         self.marathon_app_id = marathon_app_id
         self.sh = sh
 
-    def execute(self, context):
+    def execute(self):
         pass
 
 class ShCommandParser(object):

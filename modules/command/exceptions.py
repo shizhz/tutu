@@ -7,7 +7,9 @@ class CommandException(Exception):
     def __repr__(self):
         return self.msg
 
-class UnknownCommandException(CommandException): pass
+class UnknownCommandException(CommandException):
+    def __init__(self, cmd):
+       super(UnknownCommandException, self).__init__('Unknown Command: ' + cmd)
 
 class InvalidParserParameterException(CommandException): pass
 

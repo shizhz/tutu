@@ -3,6 +3,9 @@
 from cmd import Command, CommandContext, validator, cmd_indicator
 from cmd_sh import ShCommand
 from models import CommandInfo
+from exceptions import UnknownCommandException
+
+_all_commands = [ShCommand]
 
 class HelpCommand(Command):
     """
@@ -24,9 +27,12 @@ class HelpCommand(Command):
     def _cmd_notfound(self):
         raise UnknownCommandException(self.target_cmd)
 
-    def execute(self, context):
-        with context as cmds:
-            return cmds.get(self.target_cmd) or self._cmd_notfound()
+    def _help_infos(self, commands=_all_commands):
+        commands = list(set(commands + [self.__class__]))
+        return dict(map(lambda cmd: [cmd.name, cmd.help_info()], commands))
+
+    def execute(self, commands=_all_commands):
+        return self._help_infos(commands=commands).get(self.target_cmd) or self._cmd_notfound()
 
 class HelpCommandParser(object):
     support = cmd_indicator(HelpCommand)
@@ -41,13 +47,10 @@ class HelpCommandParser(object):
         - help sh
         - help show
         """
-        target_cmd = txt.split()[1]
+        try:
+            target_cmd = txt.split()[1]
+        except IndexError:
+            target_cmd = 'help'
+
         return HelpCommand(target_cmd)
 
-class HelpCommandContext(CommandContext):
-    all_commands = [ShCommand, HelpCommand]
-    def enter(self):
-        return dict(map(lambda cmd: [cmd.name, cmd.help_info()], self.all_commands))
-
-    def exit(self, type, value, traceback):
-        pass

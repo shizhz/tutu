@@ -6,7 +6,7 @@ class Command(object):
     """
     Abstract of all commands Tutu knows
     """
-    def execute(self, context):
+    def execute(self):
         """
         Execute this command within context
         """

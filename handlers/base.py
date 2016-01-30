@@ -50,3 +50,7 @@ class BaseHandler(tornado.web.RequestHandler, Jinja2TemplateRender):
 
     def render_jinja2(self, temp_name, **kwargs):
         self.write(self.render_template(temp_name, **kwargs))
+
+    def write_json(self, data):
+        self.set_header("Content-Type", "application/json")
+        self.write(json.dumps(data))
