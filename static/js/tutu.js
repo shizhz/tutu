@@ -1,13 +1,60 @@
+var TutuWebSocket = TutuWebSocket || (function() {
+    var ws = undefined;
+    var topicRegistry = {};
+
+    function initTopics() {
+        onTopic('cmd_result', function(data) {
+            Tutu.addMessage({
+                user: "Tutu",
+                uicon: "tutu_icon",
+                content: data
+            });
+        });
+    }
+
+    function init() {
+        if (!ws) {
+            ws = new WebSocket("ws://" + location.host +  "/ws/invoke");
+            ws.onmessage = function(evt) {
+                var result = JSON.parse(evt.data);
+                var topic = result['topic'];
+                topicRegistry[topic](result['data']);
+            };
+        }
+        initTopics();
+    }
+
+    function onTopic(topic, func) {
+        topicRegistry = topicRegistry || {};
+        topicRegistry[topic] = func;
+    }
+
+    function send(msg) {
+        ws.send(msg);
+    }
+
+    return {
+        "init": init,
+        "onTopic": onTopic,
+        "send": send
+    };
+})();
+
+
 var Tutu = Tutu || (function() {
     function rawInput() {
         return $('#message-input').val();
+    };
+
+    function clearInput() {
+        return $('#message-input').val('');
     };
 
     function setSuggestedInput(sInput) {
         $('.typeahead').typeahead('val', sInput);
     };
 
-    function suggestion_menu_visible() {
+    function suggestionMenuVisible() {
         return $('div.tt-menu').is(":visible");
     }
 
@@ -17,7 +64,7 @@ var Tutu = Tutu || (function() {
     }
 
     function removeSuggestionMenu(e) {
-        if (suggestion_menu_visible()) {
+        if (suggestionMenuVisible()) {
             var suggestions = $('div.tt-menu div.tt-suggestion');
 
             if (suggestions.length == 1) {
@@ -32,12 +79,25 @@ var Tutu = Tutu || (function() {
         }
     }
 
+    function addMessage(ctx) {
+        var template = Handlebars.compile($('#message_tmpl').html());
+        $(template(ctx)).hide().appendTo($('#msgs_div')).fadeIn(500);
+    }
+
     function initHotkeyBindings() {
         var msg_box = $('#message-input')[0];
+
         Mousetrap(msg_box).bind('enter', function(e) {
             removeSuggestionMenu();
-            if (!suggestion_menu_visible()) {
-                console.log("menu is visible, ignore logic here");
+            if (!suggestionMenuVisible()) {
+                var cmd = rawInput();
+                addMessage({
+                    user: "You",
+                    uicon: "user_icon",
+                    content: cmd
+                });
+                clearInput();
+                TutuWebSocket.send(cmd);
             }
         });
 
@@ -98,11 +158,14 @@ var Tutu = Tutu || (function() {
     }
 
     $(function() {
+        TutuWebSocket.init();
         initHotkeyBindings();
         initTypeahead();
         initFocus();
     });
 
     // API
-    return {};
+    return {
+        'addMessage': addMessage
+    };
 })();

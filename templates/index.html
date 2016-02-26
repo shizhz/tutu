@@ -40,17 +40,6 @@
                                     <div class="monkey_scroll_hider  scrolling" style="width: 1684px; margin-right: 17px;">
                                         <div id="msgs_scroller_div" tabindex="1" style="height: 935px; width: 1696px;" class="monkey_scroller">
                                             <div id="msgs_div" class="msgs_holder">
-                                                <ts-message class="message first">
-                                                    <div class="message_gutter">
-                                                        <div class="message_icon">
-                                                            <a href="#" class="member_preview_link member_image thumb_36 user_icon"></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="message_content">
-                                                        <a href="#" class="message_sender member member_preview_link">You</a>
-                                                        <span class="message_body">help logs</span>
-                                                    </div>
-                                                </ts-message>
                                                 <ts-message class="message feature_fix_files first">
                                                     <div class="message_gutter">
                                                         <div class="message_icon">
@@ -59,7 +48,7 @@
                                                     </div>
                                                     <div class="message_content">
                                                         <a href="#" class="message_sender member member_preview_link">Tutu</a>
-                                                        <span class="message_body">Sorry, I don't know how to help you with "logs". Please type <code class="special_formatting"><span class="copyonly">`</span>/help<span class="codecopyonly copyonly">`</span></code> for details of how I can help you.</span>
+                                                        <span class="message_body">Please type <code class="special_formatting"><span class="copyonly">`</span>help<span class="codecopyonly copyonly">`</span></code> for details of how I can help you.</span>
                                                     </div>
                                                 </ts-message>
                                             </div>
@@ -78,7 +67,21 @@
     <script src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/static/bower_components/intercooler-js/src/intercooler.js"></script>
     <script src="/static/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+    <script src="/static/bower_components/handlebars/handlebars.min.js"></script>
     <script src="/static/js/mousetrap.min.js"></script>
     <script src="/static/js/mousetrap-global-bind.min.js"></script>
     <script src="/static/js/tutu.js"></script>
+    <script id="message_tmpl" type="text/x-handlebars-template">
+        <ts-message class="message first">
+            <div class="message_gutter">
+                <div class="message_icon">
+                    <a href="#" class="member_preview_link member_image thumb_36 {{ ' {{ uicon }} ' }}"></a>
+                </div>
+            </div>
+            <div class="message_content">
+                <a href="#" class="message_sender member member_preview_link">{{ "{{ user }}" }}</a>
+                <span class="message_body">{{ "{{ content }}" }}</span>
+            </div>
+        </ts-message>
+    </script>
 </html>
