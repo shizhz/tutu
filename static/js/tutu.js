@@ -10,18 +10,25 @@ var TutuWebSocket = TutuWebSocket || (function() {
                 content: data
             });
         });
-        onTopic('ws-closed', function() {
+        onTopic('ws_close', function() {
             Tutu.addMessage({
                 user: "Tutu",
                 uicon: "tutu_icon",
                 content: "The connection seems closed, please refresh your browser to re-connect"
             });
         });
-        onTopic('ws-error', function() {
+        onTopic('ws_error', function() {
             Tutu.addMessage({
                 user: "Tutu",
                 uicon: "tutu_icon",
                 content: "Some error seems just happened, please retry or refresh your browser"
+            });
+        });
+        onTopic('ws_open', function(data) {
+            Tutu.addMessage({
+                user: "Tutu",
+                uicon: "tutu_icon",
+                content: "Available commands: " + data
             });
         });
     }
@@ -35,10 +42,10 @@ var TutuWebSocket = TutuWebSocket || (function() {
                 topicRegistry[topic](result['data']);
             };
             ws.onclose = function(evt) {
-                topicRegistry['ws-closed']();
+                topicRegistry['ws_close']();
             };
             ws.onerror = function(evt) {
-                topicRegistry['ws-error']();
+                topicRegistry['ws_error']();
             };
         }
         initTopics();
@@ -100,8 +107,14 @@ var Tutu = Tutu || (function() {
     }
 
     function addMessage(ctx) {
+        var msgsDiv = $('#msgs_div');
         var template = Handlebars.compile($('#message_tmpl').html());
-        $(template(ctx)).hide().appendTo($('#msgs_div')).fadeIn(500);
+        $(template(ctx)).hide().appendTo(msgsDiv).fadeIn(500);
+
+        var msgsScrollDiv = $('#msgs_scroller_div');
+        msgsScrollDiv.animate({
+            scrollTop: msgsScrollDiv.prop('scrollHeight')
+        }, "slow");
     }
 
     function initHotkeyBindings() {

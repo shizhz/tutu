@@ -18,10 +18,21 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
     lock = threading.Lock()
     connections = 0
 
+    def _available_commands(self):
+        return ", ".join([c.name for c in all_commands])
+
+    def _write_json(self, data):
+        self.write_message(json.dumps(data))
+
     def open(self):
         with self.lock:
             self.__class__.connections += 1
             logger.info("New connection from: {0}, current total connections: {1}".format(self.request.remote_ip, self.__class__.connections))
+
+        self._write_json({
+            "topic": "ws_open",
+            "data": self._available_commands()
+        })
 
     def on_message(self, command):
         logger.info("Recieved command '{0}' from '{1}'".format(command, self.request.remote_ip))
@@ -29,16 +40,15 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
             cmd = CommandParser().parse(command)
             result = cmd.execute()
         except UnknownCommandException:
-            commands = [c.name for c in all_commands]
-            result = """Command not found, please use one of the available commands below:\n {0} """.format(', '.join(commands))
+            result = """Command not found, please use one of the available commands below:\n {0} """.format(self._available_commands())
         except Exception, e:
             logger.exception(e)
             result = "Ooops... something wrong happened"
         finally:
-            self.write_message(json.dumps({
+            self._write_json({
                 "topic": "cmd_result",
                 "data": result
-            }))
+            })
 
     def on_close(self):
         with self.lock:
