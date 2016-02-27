@@ -24,9 +24,15 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
 
     def on_message(self, command):
         logger.info("Recieved command '{0}' from '{1}'".format(command, self.request.remote_ip))
+        parser = CommandParser()
+        try:
+            cmd = parser.parse(command)
+        except Exception, e:
+            logger.exception(e)
+
         self.write_message(json.dumps({
             "topic": "cmd_result",
-            "data": "Command Result {0}".format(command)
+            "data": cmd.execute()
         }))
 
     def on_close(self):

@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from cmd import Command, CommandContext, validator, cmd_indicator
 from cmd_sh import ShCommand
 from models import CommandInfo
 from exceptions import UnknownCommandException
 
+logger = logging.getLogger('tutu.modules.command.' + __name__)
 _all_commands = [ShCommand]
 
 class HelpCommand(Command):
     """
-    NAME: help - get help info for specified command
+    NAME: help - get help info for specified command 
 
     SYNOPSIS: help <command>
 
@@ -39,7 +42,7 @@ class HelpCommandParser(object):
 
     @validator
     def is_valid(self, txt):
-        return self.support(txt) and len(txt.split()) > 1
+        return self.support(txt) and len(txt.split()) >= 1
 
     def parse(self, txt):
         """

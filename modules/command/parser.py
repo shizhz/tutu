@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from cmd_sh import ShCommandParser
 from cmd_help import HelpCommandParser
 from exceptions import UnknownCommandException
 
 all_parsers = [HelpCommandParser(), ShCommandParser()]
+
+logger = logging.getLogger('tutu.handlers.' + __name__)
 
 class CommandParser(object):
     parsers = all_parsers

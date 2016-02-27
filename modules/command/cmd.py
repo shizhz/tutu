@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from exceptions import InvalidParserParameterException, InvalidCommandException
 
 class Command(object):
@@ -38,7 +40,7 @@ def validator(fn):
             raise InvalidParserParameterException(args)
         txt = args[1]
 
-        if not txt or not isinstance(txt, str):
+        if not txt or (not isinstance(txt, str) and not isinstance(txt, unicode)):
             raise InvalidParserParameterException(txt)
 
         if not fn(args[0], txt.strip()):
