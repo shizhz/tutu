@@ -10,6 +10,20 @@ var TutuWebSocket = TutuWebSocket || (function() {
                 content: data
             });
         });
+        onTopic('ws-closed', function() {
+            Tutu.addMessage({
+                user: "Tutu",
+                uicon: "tutu_icon",
+                content: "The connection seems closed, please refresh your browser to re-connect"
+            });
+        });
+        onTopic('ws-error', function() {
+            Tutu.addMessage({
+                user: "Tutu",
+                uicon: "tutu_icon",
+                content: "Some error seems just happened, please retry or refresh your browser"
+            });
+        });
     }
 
     function init() {
@@ -19,6 +33,12 @@ var TutuWebSocket = TutuWebSocket || (function() {
                 var result = JSON.parse(evt.data);
                 var topic = result['topic'];
                 topicRegistry[topic](result['data']);
+            };
+            ws.onclose = function(evt) {
+                topicRegistry['ws-closed']();
+            };
+            ws.onerror = function(evt) {
+                topicRegistry['ws-error']();
             };
         }
         initTopics();

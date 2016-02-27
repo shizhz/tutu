@@ -9,6 +9,7 @@ import threading
 
 from handlers.base import BaseHandler
 from modules.command import all_commands
+from modules.command.exceptions import *
 from modules.command.parser import CommandParser
 
 logger = logging.getLogger('tutu.handlers.' + __name__)
@@ -24,16 +25,20 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
 
     def on_message(self, command):
         logger.info("Recieved command '{0}' from '{1}'".format(command, self.request.remote_ip))
-        parser = CommandParser()
         try:
-            cmd = parser.parse(command)
+            cmd = CommandParser().parse(command)
+            result = cmd.execute()
+        except UnknownCommandException:
+            commands = [c.name for c in all_commands]
+            result = """Command not found, please use one of the available commands below:\n {0} """.format(', '.join(commands))
         except Exception, e:
             logger.exception(e)
-
-        self.write_message(json.dumps({
-            "topic": "cmd_result",
-            "data": cmd.execute()
-        }))
+            result = "Ooops... something wrong happened"
+        finally:
+            self.write_message(json.dumps({
+                "topic": "cmd_result",
+                "data": result
+            }))
 
     def on_close(self):
         with self.lock:
