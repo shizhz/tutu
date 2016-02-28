@@ -19,6 +19,10 @@ SIT = {
     'bamboo_url': 'http://192.168.0.170'
 }
 
+CACHE = {
+
+}
+
 def help_info():
     return """
     Jenkins Address: {jenkins}

@@ -8,7 +8,9 @@ import tornado.websocket
 import threading
 
 from handlers.base import BaseHandler
-from modules.command import all_commands
+from modules.cache import CURRENT as cache
+from modules.command import all_commands, command_parser
+from modules.command.cmd_share import ShareCommand
 from modules.command.exceptions import *
 from modules.command.parser import CommandParser
 
@@ -34,10 +36,20 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
             "data": self._available_commands()
         })
 
+    def cache_cmd(self, command):
+        share_code = cache.random_cache_key()
+
+        cache.set_cache(share_code, command)
+
+        return share_code
+
+    def detect_topic(self, command):
+        return 'share' if isinstance(command, ShareCommand) else 'cmd_result'
+
     def on_message(self, command):
         logger.info("Recieved command '{0}' from '{1}'".format(command, self.request.remote_ip))
         try:
-            cmd = CommandParser().parse(command)
+            cmd = command_parser.parse(command)
             result = cmd.execute()
         except UnknownCommandException:
             result = """Command not found, please use one of the available commands below:\n {0} """.format(self._available_commands())
@@ -46,7 +58,8 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
             result = "Ooops... something wrong happened"
         finally:
             self._write_json({
-                "topic": "cmd_result",
+                "topic": self.detect_topic(cmd),
+                "share_code": self.cache_cmd(command),
                 "data": result
             })
 

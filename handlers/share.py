@@ -6,4 +6,6 @@ class ShareHandler(BaseHandler):
     """
     Handling all sharing links
     """
-    pass
+    def get(self, share_code):
+        self.set_cookie('share_code', share_code)
+        self.redirect('/')

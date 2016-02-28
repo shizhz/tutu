@@ -6,12 +6,12 @@ from handlers.share import ShareHandler
 
 rest_patterns = [
     (r"/ws/invoke", CommandWSHandler),
-    (r"/api/commands", CommandListHandler),
-    (r"/api/share", ShareHandler)
+    (r"/api/commands", CommandListHandler)
 ]
 
 routes = [
     (r"/", IndexHandler),
+    (r"/share/(.*)", ShareHandler)
 ]
 
 url_patterns = rest_patterns + routes

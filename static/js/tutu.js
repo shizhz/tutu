@@ -1,3 +1,14 @@
+String.prototype.hashCode = function() {
+    var hash = 0, i, chr, len;
+    if (this.length === 0) return hash;
+    for (i = 0, len = this.length; i < len; i++) {
+        chr   = this.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
+
 var TutuWebSocket = TutuWebSocket || (function() {
     var ws = undefined;
     var topicRegistry = {};
@@ -7,13 +18,33 @@ var TutuWebSocket = TutuWebSocket || (function() {
             Tutu.addMsgForTutu(data);
         });
         onTopic('ws_close', function() {
-            Tutu.addMsgForTutu("The connection seems closed, please refresh your browser to re-connect");
+            Tutu.addMsgForTutu({
+                "shareCode": "",
+                "message": "The connection seems closed, please refresh your browser to re-connect"
+            });
         });
         onTopic('ws_error', function() {
-            Tutu.addMsgForTutu("Some error seems just happened, please retry or refresh your browser");
+            Tutu.addMsgForTutu({
+                "shareCode": "",
+                "message": "Some error seems just happened, please retry or refresh your browser"
+            });
         });
         onTopic('ws_open', function(data) {
-            Tutu.addMsgForTutu("Available commands: " + data);
+            Tutu.addMsgForTutu({
+                "shareCode": "",
+                "message": "Available commands: " + data
+            });
+        });
+        onTopic('share', function(data) {
+            var shareCode = data['cmd'];
+            Tutu.addMsgForUser({
+                "shareCode": shareCode,
+                "message": data['cmd']
+            });
+            Tutu.addMsgForTutu({
+                "shareCode": shareCode,
+                "message": data['result']
+            });
         });
     }
 
@@ -23,13 +54,23 @@ var TutuWebSocket = TutuWebSocket || (function() {
             ws.onmessage = function(evt) {
                 var result = JSON.parse(evt.data);
                 var topic = result['topic'];
-                topicRegistry[topic](result['data']);
+                topicRegistry[topic]({
+                    "shareCode": result['shareCode'],
+                    "message": result['data']
+                });
             };
             ws.onclose = function(evt) {
                 topicRegistry['ws_close']();
             };
             ws.onerror = function(evt) {
                 topicRegistry['ws_error']();
+            };
+            ws.onopen = function() {
+                if (Cookies.get('share_code')) {
+                    var share_code = Cookies.get('share_code');
+                    Cookies.remove('share_code');
+                    send('share ' + share_code);
+                }
             };
         }
         initTopics();
@@ -41,7 +82,7 @@ var TutuWebSocket = TutuWebSocket || (function() {
     }
 
     function send(msg) {
-        ws.send(msg);
+        ws.send(JSON.stringify(msg));
     }
 
     return {
@@ -90,19 +131,21 @@ var Tutu = Tutu || (function() {
         }
     }
 
-    function addMsgForTutu(msg) {
+    function addMsgForTutu(data) {
         addMessage({
             user: "Tutu",
             uicon: "tutu_icon",
-            content: msg
+            shareCode: data['shareCode'],
+            content: data['message']
         });
     }
 
-    function addMsgForUser(msg) {
+    function addMsgForUser(data) {
         addMessage({
             user: "You",
             uicon: "user_icon",
-            content: msg
+            shareCode: data['shareCode'],
+            content: data['message']
         });
     }
 
@@ -124,9 +167,16 @@ var Tutu = Tutu || (function() {
             removeSuggestionMenu();
             if (!suggestionMenuVisible()) {
                 var cmd = rawInput();
-                addMsgForUser(cmd);
+                var shareCode = cmd.hashCode();
+                addMsgForUser({
+                    "shareCode": shareCode,
+                    "message": cmd
+                });
                 clearInput();
-                TutuWebSocket.send(cmd);
+                TutuWebSocket.send({
+                    "shareCode": shareCode,
+                    "command": cmd
+                });
             }
         });
 
@@ -196,6 +246,7 @@ var Tutu = Tutu || (function() {
     // API
     return {
         'addMessage': addMessage,
-        'addMsgForTutu': addMsgForTutu
+        'addMsgForTutu': addMsgForTutu,
+        'addMsgForUser': addMsgForUser
     };
 })();
