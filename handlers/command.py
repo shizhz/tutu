@@ -55,17 +55,6 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
             self.__class__.connections -= 1
             logger.info("Remove connection from: {0}, current total connections: {1}".format(self.request.remote_ip, self.__class__.connections))
 
-class CommandHandler(BaseHandler):
-    """
-    Handling all command
-    """
-    def post(self):
-        cParser = CommandParser()
-        cmd = cParser.parse(self.get_json_argument('command'))
-        self.write_json({
-            'result': cmd.execute()
-        })
-
 class CommandListHandler(BaseHandler):
     def get(self):
         commands = [{"name": c.name, "aliases": c.alias} for c in all_commands]
