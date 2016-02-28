@@ -2,7 +2,7 @@
 
 import logging
 
-from cmd import Command, CommandContext, validator, cmd_indicator
+from cmd import Command, validator, cmd_indicator
 from cmd_sh import ShCommand
 from models import CommandInfo
 from exceptions import UnknownCommandException
