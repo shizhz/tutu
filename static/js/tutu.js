@@ -4,32 +4,16 @@ var TutuWebSocket = TutuWebSocket || (function() {
 
     function initTopics() {
         onTopic('cmd_result', function(data) {
-            Tutu.addMessage({
-                user: "Tutu",
-                uicon: "tutu_icon",
-                content: data
-            });
+            Tutu.addMsgForTutu(data);
         });
         onTopic('ws_close', function() {
-            Tutu.addMessage({
-                user: "Tutu",
-                uicon: "tutu_icon",
-                content: "The connection seems closed, please refresh your browser to re-connect"
-            });
+            Tutu.addMsgForTutu("The connection seems closed, please refresh your browser to re-connect");
         });
         onTopic('ws_error', function() {
-            Tutu.addMessage({
-                user: "Tutu",
-                uicon: "tutu_icon",
-                content: "Some error seems just happened, please retry or refresh your browser"
-            });
+            Tutu.addMsgForTutu("Some error seems just happened, please retry or refresh your browser");
         });
         onTopic('ws_open', function(data) {
-            Tutu.addMessage({
-                user: "Tutu",
-                uicon: "tutu_icon",
-                content: "Available commands: " + data
-            });
+            Tutu.addMsgForTutu("Available commands: " + data);
         });
     }
 
@@ -106,6 +90,22 @@ var Tutu = Tutu || (function() {
         }
     }
 
+    function addMsgForTutu(msg) {
+        addMessage({
+            user: "Tutu",
+            uicon: "tutu_icon",
+            content: msg
+        });
+    }
+
+    function addMsgForUser(msg) {
+        addMessage({
+            user: "You",
+            uicon: "user_icon",
+            content: msg
+        });
+    }
+
     function addMessage(ctx) {
         var msgsDiv = $('#msgs_div');
         var template = Handlebars.compile($('#message_tmpl').html());
@@ -124,11 +124,7 @@ var Tutu = Tutu || (function() {
             removeSuggestionMenu();
             if (!suggestionMenuVisible()) {
                 var cmd = rawInput();
-                addMessage({
-                    user: "You",
-                    uicon: "user_icon",
-                    content: cmd
-                });
+                addMsgForUser(cmd);
                 clearInput();
                 TutuWebSocket.send(cmd);
             }
@@ -199,6 +195,7 @@ var Tutu = Tutu || (function() {
 
     // API
     return {
-        'addMessage': addMessage
+        'addMessage': addMessage,
+        'addMsgForTutu': addMsgForTutu
     };
 })();
