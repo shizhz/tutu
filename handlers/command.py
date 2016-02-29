@@ -52,7 +52,9 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
         logger.info("Recieved command '{0}' from '{1}'".format(command, self.request.remote_ip))
         try:
             self.cache_cmd(command)
+            ori_cmd = ""
             cmd = parser.command_parser.parse(self.get_cmd(command))
+            ori_cmd = cmd.get_shared_command() if isinstance(cmd, ShareCommand) else "",
             topic = self.detect_topic(cmd)
             result = cmd.execute()
         except UnknownCommandException, e:
@@ -72,7 +74,7 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
                 self._write_json({
                     "topic": topic,
                     "share_code": self.get_share_code(command),
-                    "cmd": cmd.get_shared_command() if isinstance(cmd, ShareCommand) else "",
+                    "cmd": ori_cmd,
                     "data": result
                 })
             except Exception, e:
@@ -80,7 +82,7 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
                 self._write_json({
                     "topic": "internal_error",
                     "share_code": "",
-                    "data": "Ooops... somethind wrong happened " + str(e)
+                    "data": "Ooops... something wrong happened: " + str(e)
                 })
 
     def on_close(self):
