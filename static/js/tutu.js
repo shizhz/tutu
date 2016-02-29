@@ -49,7 +49,7 @@ var TutuWebSocket = TutuWebSocket || (function() {
         onTopic("internal_error", function(data) {
             Tutu.addMsgForTutu({
                 "shareCode": "",
-                "message": data['data']
+                "message": data['message']
             });
         });
     }
@@ -60,6 +60,7 @@ var TutuWebSocket = TutuWebSocket || (function() {
             ws.onmessage = function(evt) {
                 var result = JSON.parse(evt.data);
                 var topic = result['topic'];
+                console.log(result);
                 topicRegistry[topic]({
                     "cmd": result['cmd'],
                     "shareCode": result['share_code'],

@@ -4,6 +4,7 @@ import logging
 
 from cmd import Command, validator, cmd_indicator
 from modules.cache import CURRENT as cache
+from exceptions import SharedCommandExpiredException
 import parser
 
 logger = logging.getLogger('tutu.modules.command.' + __name__)
@@ -26,6 +27,9 @@ class ShareCommand(Command):
         return cache.get_cache(self.share_code)
 
     def execute(self):
+        shared_cmd = self.get_shared_command()
+        if not shared_cmd:
+            raise SharedCommandExpiredException("Shared Code: {0}".format(self.share_code))
         return parser.command_parser.parse(self.get_shared_command()).execute()
 
 
