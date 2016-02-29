@@ -6,9 +6,7 @@ import string
 import random
 
 class Cache(object):
-    def random_cache_key(self, size=10):
-        chars = string.ascii_letters + string.digits
-        return ''.join(random.choice(chars) for _ in range(size))
+    pass
 
 class SimpleDictCache(Cache):
     bucket = {}

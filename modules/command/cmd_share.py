@@ -3,8 +3,8 @@
 import logging
 
 from cmd import Command, validator, cmd_indicator
-from modules.cache import cache
-from . import command_parser
+from modules.cache import CURRENT as cache
+import parser
 
 logger = logging.getLogger('tutu.modules.command.' + __name__)
 
@@ -22,10 +22,11 @@ class ShareCommand(Command):
     def __init__(self, share_code):
         self.share_code = share_code
 
-    def execute(self):
-        target_command = cache.get_cache(self.share_code)
+    def get_shared_command(self):
+        return cache.get_cache(self.share_code)
 
-        return command_parser.parse(target_command)
+    def execute(self):
+        return parser.command_parser.parse(self.get_shared_command()).execute()
 
 
 class ShareCommandParser(object):

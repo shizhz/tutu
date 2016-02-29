@@ -32,18 +32,24 @@ var TutuWebSocket = TutuWebSocket || (function() {
         onTopic('ws_open', function(data) {
             Tutu.addMsgForTutu({
                 "shareCode": "",
-                "message": "Available commands: " + data
+                "message": "Available commands: " + data['message']
             });
         });
         onTopic('share', function(data) {
-            var shareCode = data['cmd'];
+            var shareCode = data['share_code'];
             Tutu.addMsgForUser({
                 "shareCode": shareCode,
                 "message": data['cmd']
             });
             Tutu.addMsgForTutu({
                 "shareCode": shareCode,
-                "message": data['result']
+                "message": data['message']
+            });
+        });
+        onTopic("internal_error", function(data) {
+            Tutu.addMsgForTutu({
+                "shareCode": "",
+                "message": data['data']
             });
         });
     }
@@ -55,7 +61,8 @@ var TutuWebSocket = TutuWebSocket || (function() {
                 var result = JSON.parse(evt.data);
                 var topic = result['topic'];
                 topicRegistry[topic]({
-                    "shareCode": result['shareCode'],
+                    "cmd": result['cmd'],
+                    "shareCode": result['share_code'],
                     "message": result['data']
                 });
             };
@@ -67,9 +74,13 @@ var TutuWebSocket = TutuWebSocket || (function() {
             };
             ws.onopen = function() {
                 if (Cookies.get('share_code')) {
-                    var share_code = Cookies.get('share_code');
+                    var shareCode = Cookies.get('share_code');
+                    var cmd = "share " + shareCode;
                     Cookies.remove('share_code');
-                    send('share ' + share_code);
+                    send({
+                        'shareCode': cmd.hashCode(),
+                        'command': cmd
+                    });
                 }
             };
         }

@@ -9,10 +9,10 @@ import threading
 
 from handlers.base import BaseHandler
 from modules.cache import CURRENT as cache
-from modules.command import all_commands, command_parser
+from modules.command import all_commands
 from modules.command.cmd_share import ShareCommand
 from modules.command.exceptions import *
-from modules.command.parser import CommandParser
+import modules.command.parser as parser
 
 logger = logging.getLogger('tutu.handlers.' + __name__)
 
@@ -36,32 +36,48 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
             "data": self._available_commands()
         })
 
-    def cache_cmd(self, command):
-        share_code = cache.random_cache_key()
-
-        cache.set_cache(share_code, command)
-
-        return share_code
+    def cache_cmd(self, args):
+        cache.set_cache(self.get_share_code(args), self.get_cmd(args))
 
     def detect_topic(self, command):
         return 'share' if isinstance(command, ShareCommand) else 'cmd_result'
 
+    def get_share_code(self, args):
+        return str(json.loads(args)['shareCode'])
+
+    def get_cmd(self, args):
+        return str(json.loads(args)['command'])
+
     def on_message(self, command):
         logger.info("Recieved command '{0}' from '{1}'".format(command, self.request.remote_ip))
         try:
-            cmd = command_parser.parse(command)
+            self.cache_cmd(command)
+            cmd = parser.command_parser.parse(self.get_cmd(command))
+            topic = self.detect_topic(cmd)
             result = cmd.execute()
-        except UnknownCommandException:
+        except UnknownCommandException, e:
+            logger.exception(e)
+            topic = 'cmd_result'
             result = """Command not found, please use one of the available commands below:\n {0} """.format(self._available_commands())
         except Exception, e:
             logger.exception(e)
+            topic = 'internal_error'
             result = "Ooops... something wrong happened"
         finally:
-            self._write_json({
-                "topic": self.detect_topic(cmd),
-                "share_code": self.cache_cmd(command),
-                "data": result
-            })
+            try:
+                self._write_json({
+                    "topic": topic,
+                    "share_code": self.get_share_code(command),
+                    "cmd": cmd.get_shared_command() if isinstance(cmd, ShareCommand) else "",
+                    "data": result
+                })
+            except Exception, e:
+                logger.exception(e)
+                self._write_json({
+                    "topic": "internal_error",
+                    "share_code": "",
+                    "data": "Ooops... somethind wrong happened " + str(e)
+                })
 
     def on_close(self):
         with self.lock:
