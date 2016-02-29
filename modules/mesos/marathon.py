@@ -13,7 +13,7 @@ from .. import log, util
 from . import zookeeper
 
 class MarathonResolver(object):
-    # TODO: Is there a thread safe problem here?
+    # TODO: Is there a thread safe problem?
     bucket = {}
 
     def __init__(self, zk):

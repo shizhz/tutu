@@ -36,7 +36,7 @@ var TutuWebSocket = TutuWebSocket || (function() {
             });
         });
         onTopic('share', function(data) {
-            var shareCode = data['share_code'];
+            var shareCode = data['shareCode'];
             Tutu.addMsgForUser({
                 "shareCode": shareCode,
                 "message": data['cmd']
@@ -60,7 +60,6 @@ var TutuWebSocket = TutuWebSocket || (function() {
             ws.onmessage = function(evt) {
                 var result = JSON.parse(evt.data);
                 var topic = result['topic'];
-                console.log(result);
                 topicRegistry[topic]({
                     "cmd": result['cmd'],
                     "shareCode": result['share_code'],
