@@ -18,9 +18,9 @@ import requests.exceptions
 
 import mesos.interface.mesos_pb2
 
-from .. import log
+from .. import log, util
 
-from . import exceptions, framework, slave, task, util, zookeeper
+from . import exceptions, framework, slave, task, zookeeper
 
 ZOOKEEPER_TIMEOUT = 1
 

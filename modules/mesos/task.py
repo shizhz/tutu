@@ -6,7 +6,8 @@ import datetime
 import os
 import re
 
-from . import exceptions, framework, util
+from .. import util
+from . import exceptions, framework
 
 
 class Task(object):

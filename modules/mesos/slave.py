@@ -7,8 +7,8 @@ import urlparse
 import requests
 import requests.exceptions
 
-from .. import log
-from . import exceptions, util
+from .. import log, util
+from . import exceptions
 
 
 class MesosSlave(object):
