@@ -163,7 +163,15 @@ var Tutu = Tutu || (function() {
     function addMessage(ctx) {
         var msgsDiv = $('#msgs_div');
         var template = Handlebars.compile($('#message_tmpl').html());
-        $(template(ctx)).hide().appendTo(msgsDiv).fadeIn(500);
+        $(template(ctx)).hide().appendTo(msgsDiv).fadeIn(500).hover(function() {
+            if ($(this).attr('share-code')) {
+                $('a[class*="copy_icon"]', $(this)).removeClass('hidden');
+            }
+        }, function() {
+            if ($(this).attr('share-code')) {
+                $('a[class*="copy_icon"]', $(this)).addClass('hidden');
+            }
+        });
 
         var msgsScrollDiv = $('#msgs_scroller_div');
         msgsScrollDiv.animate({
