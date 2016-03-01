@@ -26,6 +26,8 @@ class MarathonConnectionException(MarathonException):
     def __init__(self, msg):
         MarathonException.__init__(self, msg)
 
+class ZookeeperConnectionException(Exception):pass
+
 class AppNotFoundException(MarathonException):
     def __init__(self, app_id):
         self.app_id = app_id

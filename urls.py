@@ -3,15 +3,12 @@
 from handlers.index import IndexHandler
 from handlers.command import CommandListHandler, CommandWSHandler
 from handlers.share import ShareHandler
+from handlers.marathon import MarathonEventsHandler
 
-rest_patterns = [
-    (r"/ws/invoke", CommandWSHandler),
-    (r"/api/commands", CommandListHandler)
-]
-
-routes = [
+url_patterns = [
     (r"/", IndexHandler),
-    (r"/share/(.*)", ShareHandler)
+    (r"/share/(.*)", ShareHandler),
+    (r"/ws/invoke", CommandWSHandler),
+    (r"/api/commands", CommandListHandler),
+    (r"/api/marathon/callback", MarathonEventsHandler),
 ]
-
-url_patterns = rest_patterns + routes

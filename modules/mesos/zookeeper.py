@@ -8,22 +8,19 @@ import kazoo.client
 import kazoo.exceptions
 import kazoo.handlers.threading
 
-from .. import log
+import exceptions
 
-TIMEOUT = 30
 
-# Helper for testing
 client_class = kazoo.client.KazooClient
 
 @contextlib.contextmanager
 def client(*args, **kwargs):
     zk = client_class(*args, **kwargs)
     try:
-        zk.start(timeout=TIMEOUT)
+        zk.start(timeout=30)
     except kazoo.handlers.threading.KazooTimeoutError:
-        log.fatal(
-            "Could not connect to zookeeper. " +
-            "Change your config via `mesos config master`")
+        log.warn("Could not connect to zookeeper. ")
+        raise exceptions.ZookeeperConnectionException()
     try:
         yield zk
     finally:

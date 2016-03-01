@@ -2,6 +2,9 @@
 
 from __future__ import absolute_import, print_function
 
+import logging
+from tornado import gen
+
 import requests
 import kazoo.client
 import kazoo.exceptions
@@ -11,6 +14,8 @@ import requests.exceptions
 from .. import log, util
 
 from . import zookeeper
+
+logger = logging.getLogger('tutu.modules.mesos.' + __name__)
 
 class MarathonResolver(object):
     # TODO: Is there a thread safe problem?
@@ -84,13 +89,19 @@ class Marathon(object):
     def ids_of_apps(self):
         return map(lambda app: app['id'][1:], self.apps())
 
-    def details_of_app(self, app_id):
+    def app_by_id(self, app_id):
         app = filter(lambda app: app_id in app['id'], self.apps())
 
         if not app:
             raise AppNotFoundException(app_id)
 
-        return app[0]
+        return MarathonApp(app[0])
+
+    @gen.coroutine
+    def register_callback(self, callback):
+        registry_url = self.get_marathon_address().rstrip('/') + '/v2/eventSubscriptions?callbackUrl=' + callback
+        logger.debug('Registerring callback: {0}'.format(registry_url))
+        requests.post(registry_url, headers={'Content-Type': 'application/json; charset=utf-8'})
 
 class MarathonApp(object):
     def __init__(self, marathon, app_info):

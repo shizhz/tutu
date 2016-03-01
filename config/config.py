@@ -2,26 +2,38 @@
 
 Jenkins_url = 'jenkins_url_here'
 DEV = {
-    'marathon_url': 'marathon address in zk',
-    'mesos_url': 'mesos cluster address in zk',
-    'bamboo_url': 'http://192.168.0.170'
-}
-
-DEV = {
-    'marathon_url': 'marathon address in zk',
-    'mesos_url': 'mesos cluster address in zk',
+    'marathon_url': 'zk://192.168.0.119:2181,192.168.0.120:2181,192.168.0.121:2181,192.168.0.122:2181,192.168.0.123:2181/marathon-cluster',
+    'mesos_url': 'zk://192.168.0.119:2181,192.168.0.120:2181,192.168.0.121:2181,192.168.0.122:2181,192.168.0.123:2181/mesos-cluster',
     'bamboo_url': 'http://192.168.0.170'
 }
 
 SIT = {
-    'marathon_url': 'marathon address in zk',
-    'mesos_url': 'mesos cluster address in zk',
+    'marathon_url': 'zk://192.168.0.119:2181,192.168.0.120:2181,192.168.0.121:2181,192.168.0.122:2181,192.168.0.123:2181/marathon-cluster',
+    'mesos_url': 'zk://192.168.0.119:2181,192.168.0.120:2181,192.168.0.121:2181,192.168.0.122:2181,192.168.0.123:2181/mesos-cluster',
+    'bamboo_url': 'http://192.168.0.175'
+}
+
+UAT = {
+    'marathon_url': 'zk://172.16.10.35:2181,172.16.10.36:2181,172.16.10.37:2181,172.16.10.38:2181,172.16.10.43:2181/marathon-cluster',
+    'mesos_url': 'zk://172.16.10.35:2181,172.16.10.36:2181,172.16.10.37:2181,172.16.10.38:2181,172.16.10.43:2181/mesos-cluster',
+    'bamboo_url': 'http://172.16.10.40'
+}
+
+PROD = {
+    'marathon_url': 'zk://10.10.12.41:2181,10.10.12.42:2181,10.10.12.43:2181,10.10.12.44:2181,10.10.12.45:2181/marathon-cluster',
+    'mesos_url': 'zk://10.10.12.41:2181,10.10.12.42:2181,10.10.12.43:2181,10.10.12.44:2181,10.10.12.45:2181/mesos-cluster',
     'bamboo_url': 'http://192.168.0.170'
 }
 
 CACHE = {
 
 }
+
+envs = [DEV, SIT, UAT, PROD]
+
+envs = [DEV]
+
+marathon_zks = list(set(map(lambda env: env['marathon_url'], envs)))
 
 def help_info():
     return """
