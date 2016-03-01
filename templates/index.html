@@ -70,12 +70,13 @@
     <script src="/static/bower_components/intercooler-js/src/intercooler.js"></script>
     <script src="/static/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
     <script src="/static/bower_components/handlebars/handlebars.min.js"></script>
+    <script src="/static/bower_components/clipboard.js/clipboard.min.js"></script>
     <script src="/static/js/mousetrap.min.js"></script>
     <script src="/static/js/mousetrap-global-bind.min.js"></script>
     <script src="/static/js/js.cookie-2.1.0.min.js"></script>
     <script src="/static/js/tutu.js"></script>
     <script id="message_tmpl" type="text/x-handlebars-template">
-        <ts-message class="message first" share-code="{{ '{{ shareCode }}' }}">
+        <ts-message class="message first">
             <div class="message_gutter">
                 <div class="message_icon">
                     <a href="#" class="member_preview_link member_image thumb_36 {{ ' {{ uicon }} ' }}"></a>
@@ -83,7 +84,8 @@
             </div>
             <div class="message_content">
                 <a href="#" class="message_sender member member_preview_link">{{ "{{ user }}" }}</a>
-                <a href="#" class="hidden copy_icon member_image thumb_16" aria-hidden="true"></a>
+                <input type="hidden" value="{{ '{{ shareLink }}' }}" id="{{ '{{ shareCode }}' }}">
+                <a href="#" class="hidden copy_icon member_image thumb_16" data-clipboard-target="#{{ '{{ shareCode }}' }}" aria-hidden="true"></a>
                 <span class="message_body"><pre>{{ "{{ content }}" }}</pre></span>
             </div>
         </ts-message>

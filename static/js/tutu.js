@@ -161,14 +161,19 @@ var Tutu = Tutu || (function() {
     }
 
     function addMessage(ctx) {
+        if (ctx['shareCode']) {
+            ctx['shareLink'] = "http://" + location.host + '/share/' + ctx['shareCode'];
+        }
         var msgsDiv = $('#msgs_div');
         var template = Handlebars.compile($('#message_tmpl').html());
         $(template(ctx)).hide().appendTo(msgsDiv).fadeIn(500).hover(function() {
-            if ($(this).attr('share-code')) {
+            var sc = $('input[type="hidden"]', $(this));
+            if (sc.val()) {
                 $('a[class*="copy_icon"]', $(this)).removeClass('hidden');
             }
         }, function() {
-            if ($(this).attr('share-code')) {
+            var sc = $('input[type="hidden"]', $(this));
+            if (sc.val()) {
                 $('a[class*="copy_icon"]', $(this)).addClass('hidden');
             }
         });
