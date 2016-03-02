@@ -35,7 +35,7 @@ CACHE = {
 
 envs = [DEV, SIT, UAT, PROD]
 
-envs = [DEV]
+envs = [DEV, SIT]
 
 marathon_zks = list(set(map(lambda env: env['marathon_url'], envs)))
 

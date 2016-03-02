@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import itertools
 import logging
 
@@ -25,9 +27,17 @@ class AppsCommand(Command):
         self.env = env
 
     def execute(self):
-        ms = [marathon_of_env(self.env)] if self.env else marathons
+        ms = filter(lambda a: a, [marathon_of_env(self.env)] if self.env else marathons)
+
         apps = map(Marathon.apps, ms)
-        return ', '.join(map(lambda app: app.id, itertools.chain.from_iterable(apps)))
+        apps_ids = map(lambda app: app.id, itertools.chain.from_iterable(apps))
+
+        if self.env:
+            apps_ids = filter(lambda app_id: app_id.startswith(self.env), apps_ids)
+
+        result = ', '.join(apps_ids)
+
+        return result if result else "No environment found: " + self.env
 
 class AppsCommandParser(object):
     support = cmd_indicator(AppsCommand)
@@ -37,8 +47,8 @@ class AppsCommandParser(object):
         return self.support(txt) and len(txt.split()) <= 2
 
     def parse(self, txt):
-        if txt.split() == 2:
-            return AppsCommand(txt.split()[-1])
+        if len(txt.split()) == 2:
+            return AppsCommand(env=txt.split()[-1])
         else:
             return AppsCommand()
 
