@@ -7,14 +7,12 @@ import logging
 from tornado.options import options
 from tornado import gen
 
-from config.config import marathon_zks
 from handlers.base import BaseHandler
-from modules.mesos.marathon import Marathon, MarathonApp
+from modules.mesos.marathon import marathons, MarathonApp
 from modules.cache import CURRENT as cache
 from modules.util import val_from_json, has_val
 
 logger = logging.getLogger('tutu.handlers.' + __name__)
-marathons = map(lambda zk: Marathon(zk), marathon_zks)
 
 @gen.coroutine
 def registry_marathon_event_handler():
@@ -39,10 +37,10 @@ class MarathonEventsHandler(BaseHandler):
             cls.registry[evt_type] = handler
 
     def deployment_events_handler(self):
-        marathon_apps = map(lambda app: MarathonApp(app), val_from_json(self.evt_data, 'plan.target.apps'))
+        marathon_apps = map(MarathonApp, val_from_json(self.evt_data, 'plan.target.apps'))
         marathon = filter(lambda m: m.contains_ip(self.request.remote_ip), marathons)[0]
         logger.debug("Cache apps info for Marathon: {0}".format(marathon.id))
-        cache.set_cache(marathon.id, marathon_apps)
+        cache.set_cache(marathon.cache_key, marathon_apps)
 
     @property
     def evt_data(self):

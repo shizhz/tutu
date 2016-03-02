@@ -4,7 +4,6 @@ import parser
 import cmd_help
 import cmd_sh
 import cmd_config
-import parser
+import cmd_apps
 
-all_commands = [cmd_help.HelpCommand, cmd_sh.ShCommand, cmd_config.ConfigCommand]
-command_parser = parser.CommandParser()
+all_commands = [cmd_help.HelpCommand, cmd_sh.ShCommand, cmd_config.ConfigCommand, cmd_apps.AppsCommand]

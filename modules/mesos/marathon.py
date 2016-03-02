@@ -11,9 +11,10 @@ import kazoo.exceptions
 import requests
 import requests.exceptions
 
-from .. import log, util
-
 from . import zookeeper
+from .. import log, util
+from modules.cache import CURRENT as cache
+from config.config import marathon_zks, CACHE as cache_cfg, envs
 
 logger = logging.getLogger('tutu.modules.mesos.' + __name__)
 
@@ -63,6 +64,7 @@ class MarathonResolver(object):
 
 class Marathon(object):
     def __init__(self, zk):
+        self.zk = zk
         self.resolver = MarathonResolver(zk)
         self.addresses = self.resolver.resolve()
         self.refreshed = False
@@ -82,9 +84,8 @@ class Marathon(object):
 
         raise MarathonConnectionException("None of these address works `{0}`, please check whether marathon is alive".format(','.join(self.addresses)))
 
-    def apps(self):
-        # TODO: consider cache the result for a short time like 10 seconds for speed (If there are more than 1 requests within that time)
-        return requests.get(self.get_marathon_address() + '/v2/apps').json()['apps']
+    def resolve_apps(self):
+        return map(MarathonApp, requests.get(self.get_marathon_address() + '/v2/apps').json()['apps'])
 
     def ids_of_apps(self):
         return map(lambda app: app['id'][1:], self.apps())
@@ -105,10 +106,20 @@ class Marathon(object):
 
     @property
     def id(self):
-        return self.resolver.zk
+        return self.zk
+
+    @property
+    def cache_key(self):
+        return cache_cfg.get('APPS_PREFIX') + self.id
 
     def contains_ip(self, ip):
         return ip in map(lambda address: address.split(':')[0], self.addresses)
+
+    def apps(self):
+        if not cache.is_cached(self.cache_key):
+            cache.set_cache(self.cache_key, self.resolve_apps())
+
+        return cache.get_cache(self.cache_key)
 
 class BaseInfo(object):
     def _val_of_key(self, key):
@@ -207,3 +218,11 @@ class DockerContainerInfo(BaseInfo):
     @property
     def force_pull_image(self):
         return self._val_of_key('docker.forcePullImage') == 'true'
+
+
+marathons = map(lambda zk: Marathon(zk), marathon_zks)
+
+def marathon_of_env(env):
+    for e in envs:
+        if e.get('name') == env.lower():
+            return filter(lambda m: m.zk == e.get('marathon_url'), marathons)[0]

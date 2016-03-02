@@ -19,3 +19,14 @@ class SimpleDictCache(Cache):
             return self.__class__.bucket[key]
         except KeyError:
             return default
+
+    def is_cached(self, key):
+        return self.get_cache(key) is not None
+
+    def get_cache_by_key_prefix(self, key_prefix):
+        result = {}
+        for key in self.__class__.bucket.keys():
+            if key.startswith(key_prefix):
+                result[key] = self.get_cache(key)
+
+        return result

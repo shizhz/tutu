@@ -6,11 +6,12 @@ import cmd_sh
 import cmd_help
 import cmd_config
 import cmd_share
+import cmd_apps
 from exceptions import UnknownCommandException
 
 
 logger = logging.getLogger('tutu.modules.command.' + __name__)
-all_parsers = [cmd_help.HelpCommandParser(), cmd_sh.ShCommandParser(), cmd_config.ConfigCommandParser(), cmd_share.ShareCommandParser()]
+all_parsers = [cmd_help.HelpCommandParser(), cmd_sh.ShCommandParser(), cmd_config.ConfigCommandParser(), cmd_share.ShareCommandParser(), cmd_apps.AppsCommandParser()]
 
 class CommandParser(object):
     parsers = all_parsers
