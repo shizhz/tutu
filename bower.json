@@ -13,8 +13,7 @@
       "underscore": "1.8.3",
       "intercooler-js": "0.9.3",
       "typeahead.js": "shizhz/typeahead.js",
-      "handlebars": "4.0.5",
-      "clipboard.js": "latest"
+      "handlebars": "4.0.5"
   },
   "ignore": [
     "**/.*",

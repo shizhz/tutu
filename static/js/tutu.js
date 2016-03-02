@@ -166,17 +166,34 @@ var Tutu = Tutu || (function() {
         }
         var msgsDiv = $('#msgs_div');
         var template = Handlebars.compile($('#message_tmpl').html());
-        $(template(ctx)).hide().appendTo(msgsDiv).fadeIn(500).hover(function() {
-            var sc = $('input[type="hidden"]', $(this));
-            if (sc.val()) {
-                $('a[class*="copy_icon"]', $(this)).removeClass('hidden');
+
+        function shareLink(container) {
+            return $('a[share-link*="share"]', container).attr('share-link');
+        }
+
+        function hasShareLink(container) {
+            return !!shareLink(container);
+        }
+
+        var tmpl = $(template(ctx)).hide().appendTo(msgsDiv).fadeIn(500).hover(function() {
+            if (hasShareLink($(this))) {
+                var ci = $('a[class*="copy_icon"]', $(this));
+                ci.removeClass('hidden');
             }
         }, function() {
-            var sc = $('input[type="hidden"]', $(this));
-            if (sc.val()) {
+            if (hasShareLink($(this))) {
                 $('a[class*="copy_icon"]', $(this)).addClass('hidden');
             }
         });
+
+        if (ctx['shareCode']) {
+            var ci = $('a[class*="copy_icon"]', tmpl);
+            new Clipboard(ci[0], {
+                text: function(trigger) {
+                    return trigger.getAttribute('share-link');
+                }
+            });
+        }
 
         var msgsScrollDiv = $('#msgs_scroller_div');
         msgsScrollDiv.animate({
