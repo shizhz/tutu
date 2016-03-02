@@ -14,12 +14,11 @@ import requests.exceptions
 from . import zookeeper
 from .. import log, util
 from modules.cache import CURRENT as cache
-from config.config import marathon_zks, CACHE as cache_cfg, envs
+from config.config import marathon_zks, CACHE as cache_cfg, envs, TEST
 
 logger = logging.getLogger('tutu.modules.mesos.' + __name__)
 
 class MarathonResolver(object):
-    # TODO: Is there a thread safe problem?
     bucket = {}
 
     def __init__(self, zk):
@@ -42,20 +41,21 @@ class MarathonResolver(object):
         return cls.bucket[zk]
 
     def resolve(self):
-        if not self.is_cached(self.zk):
-            hosts, path = self.zk[5:].split("/", 1)
-            path = "/" + path + "/leader"
+        if not TEST:
+            if not self.is_cached(self.zk):
+                hosts, path = self.zk[5:].split("/", 1)
+                path = "/" + path + "/leader"
 
-            with zookeeper.client(hosts=hosts, read_only=True) as zk:
-                try:
-                    marathon_addresses = map(lambda path: zk.get(path)[0], map(lambda n: '/marathon-cluster/leader/' + n, zk.get_children(path)))
-                except kazoo.exceptions.NoNodeError:
-                    log.fatal(INVALID_PATH.format(cfg))
+                with zookeeper.client(hosts=hosts, read_only=True) as zk:
+                    try:
+                        marathon_addresses = map(lambda path: zk.get(path)[0], map(lambda n: '/marathon-cluster/leader/' + n, zk.get_children(path)))
+                    except kazoo.exceptions.NoNodeError:
+                        log.fatal(INVALID_PATH.format(cfg))
 
-                self.cache(self.zk, marathon_addresses)
-                return marathon_addresses
-        else:
-            return self.get_addresses_from_cache(zk)
+                    self.cache(self.zk, marathon_addresses)
+                    return marathon_addresses
+            else:
+                return self.get_addresses_from_cache(zk)
 
     def refresh(self):
         self.clear_cache_for_zk(self.zk)
@@ -85,7 +85,7 @@ class Marathon(object):
         raise MarathonConnectionException("None of these address works `{0}`, please check whether marathon is alive".format(','.join(self.addresses)))
 
     def resolve_apps(self):
-        return map(MarathonApp, requests.get(self.get_marathon_address() + '/v2/apps').json()['apps'])
+        return map(MarathonApp, requests.get(self.get_marathon_address() + '/v2/apps').json()['apps']) if not TEST else []
 
     def ids_of_apps(self):
         return map(lambda app: app['id'][1:], self.apps())

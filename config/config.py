@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+TEST = True
 Jenkins_url = 'jenkins_url_here'
 DEV = {
     'name': 'dev',

@@ -8,6 +8,7 @@ import tornado.ioloop
 import tornado.web
 from tornado.options import options
 
+from config.config import TEST
 from settings import settings
 from urls import url_patterns
 from handlers.marathon import registry_marathon_event_handler
@@ -21,7 +22,8 @@ def main():
     http_server.listen(options.port)
 
     ioloop = tornado.ioloop.IOLoop.instance()
-    ioloop.add_timeout(ioloop.time(), registry_marathon_event_handler)
+    if not TEST:
+        ioloop.add_timeout(ioloop.time(), registry_marathon_event_handler)
 
     ioloop.start()
 
