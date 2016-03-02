@@ -103,16 +103,27 @@ class Marathon(object):
         logger.debug('Registerring callback: {0}'.format(registry_url))
         requests.post(registry_url, headers={'Content-Type': 'application/json; charset=utf-8'})
 
-class MarathonApp(object):
-    def __init__(self, marathon, app_info):
-        self.app_info = app_info
-        self.marathon = marathon
+    @property
+    def id(self):
+        return self.resolver.zk
 
+    def contains_ip(self, ip):
+        return ip in map(lambda address: address.split(':')[0], self.addresses)
+
+class BaseInfo(object):
     def _val_of_key(self, key):
-        return util.val_from_json(self.app_info, key)
+        return util.val_from_json(self.info, key)
 
     def _has_val(self, key):
         return self._val_of_key(key) is not None
+
+class MarathonApp(BaseInfo):
+    def __init__(self, app_info):
+        self.app_info = app_info
+
+    @property
+    def info(self):
+        return self.app_info
 
     @property
     def id(self):
@@ -127,3 +138,72 @@ class MarathonApp(object):
     @property
     def cpus(self):
         return self._val_of_key('cpus')
+
+    @property
+    def instances(self):
+        return self._val_of_key('instances')
+
+    def docker_container_info(self):
+        if self._has_val('container') and self._val_of_key('container.type') == 'DOCKER':
+            return DockerContainerInfo(self._val_of_key('container'))
+        else:
+            return None
+
+    @property
+    def version(self):
+        return self._val_of_key('version')
+
+class DockerVolumeInfo(BaseInfo):
+    def __init__(self, volume_info):
+        self.volume_info = volume_info
+
+    @property
+    def info(self):
+        return self.volume_info
+
+    @property
+    def container_path(self):
+        return self._val_of_key('containerPath')
+
+    @property
+    def host_path(self):
+        return self._val_of_key('hostPath')
+
+    @property
+    def mode(self):
+        return self._val_of_key('mode')
+
+class DockerContainerInfo(BaseInfo):
+    def __init__(self, docker_info):
+        self.docker_info
+
+    @property
+    def info(self):
+        return self.docker_info
+
+    @property
+    def volumes(self):
+        return map(lambda v: DockerVolumeInfo(v), self._val_of_key('volumes'))
+
+    @property
+    def image(self):
+        return self._val_of_key('docker.image')
+
+    @property
+    def network(self):
+        return self._val_of_key('docker.network')
+
+    @property
+    def port_mappings(self):
+        return self._val_of_key('docker.portMappings')
+
+    @property
+    def privileged(self):
+        return self._val_of_key('docker.privileged') == 'true'
+
+    def parameters(self):
+        return self._val_of_key('docker.parameters')
+
+    @property
+    def force_pull_image(self):
+        return self._val_of_key('docker.forcePullImage') == 'true'
