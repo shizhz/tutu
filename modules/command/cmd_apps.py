@@ -5,7 +5,7 @@ from __future__ import print_function
 import itertools
 import logging
 
-from config.config import CACHE as cache_cfg
+from config.config import CACHE as cache_cfg, envs, env_config_of
 from modules.cache import CURRENT as cache
 from cmd import Command, validator, cmd_indicator
 from modules.mesos.marathon import marathon_of_env, marathons, Marathon
@@ -26,6 +26,11 @@ class AppsCommand(Command):
     def __init__(self, env=None):
         self.env = env
 
+    def _env_app_prefixes(self):
+        env_config = env_config_of(self.env)
+
+        return [env_config_of['app-prefix']] if env_config else map(lambda e: e['app-prefix'], envs)
+
     def execute(self):
         ms = filter(lambda a: a, [marathon_of_env(self.env)] if self.env else marathons)
 
@@ -34,6 +39,8 @@ class AppsCommand(Command):
 
         if self.env:
             apps_ids = filter(lambda app_id: app_id.startswith(self.env), apps_ids)
+
+        apps_group = map(lambda app_prefix: filter(lambda app_id: app_id.upper().startswith(app_prefix.upper()), app_ids), self._env_app_prefixes())
 
         result = ', '.join(apps_ids)
 
