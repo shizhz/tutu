@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-TEST = False
+TEST = True
 Jenkins_url = 'jenkins_url_here'
 DEV = {
     'app-prefix': 'dev-',
@@ -53,22 +53,19 @@ def env_config_for_zk(zk):
     return filter(lambda env: env['marathon_url'] == zk, envs)[0]
 
 def help_info():
-    return """
-    Jenkins Address: {jenkins}
+    tmpl = """
+    {env_name}:
+       Marathon: {marathon}
+       Mesos: {mesos}
+       Bamboo: {bamboo}
+    """
+    result = []
 
-    DEV:
-       Marathon: {dev_marathon}
-       Mesos: {dev_mesos}
-       Bamboo: {dev_bamboo}
+    for env in envs:
+        result.append(tmpl.format(jenkins=Jenkins_url,
+               marathon=env['marathon_url'],
+               mesos=env['mesos_url'],
+               env_name=env['name'],
+               bamboo=env['bamboo_url']))
 
-    SIT:
-       Marathon: {sit_marathon}
-       Mesos: {sit_mesos}
-       Bamboo: {sit_bamboo}
-    """.format(jenkins=Jenkins_url,
-               dev_marathon=DEV['marathon_url'],
-               dev_mesos=DEV['mesos_url'],
-               dev_bamboo=DEV['bamboo_url'],
-               sit_marathon=SIT['marathon_url'],
-               sit_mesos=SIT['mesos_url'],
-               sit_bamboo=SIT['bamboo_url'])
+    return '    Jenkins Address: ' + Jenkins_url + ''.join(result)
