@@ -53,19 +53,14 @@ def env_config_for_zk(zk):
     return filter(lambda env: env['marathon_url'] == zk, envs)[0]
 
 def help_info():
-    tmpl = """
+    def format_env_config_info(env):
+        return """
     {env_name}:
        Marathon: {marathon}
        Mesos: {mesos}
        Bamboo: {bamboo}
-    """
-    result = []
-
-    for env in envs:
-        result.append(tmpl.format(jenkins=Jenkins_url,
-               marathon=env['marathon_url'],
+    """.format(marathon=env['marathon_url'],
                mesos=env['mesos_url'],
                env_name=env['name'],
-               bamboo=env['bamboo_url']))
-
-    return '    Jenkins Address: ' + Jenkins_url + ''.join(result)
+               bamboo=env['bamboo_url'])
+    return '    Jenkins Address: ' + Jenkins_url + ''.join(map(format_env_config_info, envs))
