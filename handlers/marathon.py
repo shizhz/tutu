@@ -66,3 +66,8 @@ class MarathonEventsHandler(BaseHandler):
         except Exception, e:
             logger.exception(e)
             print("Exception happened")
+
+class MarathonAppsListHandler(BaseHandler):
+    def get(self):
+        apps_ids = map(lambda m: m.ids_of_apps(), marathons)
+        self.write_json([x for y in apps_ids for x in y])

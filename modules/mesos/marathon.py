@@ -88,7 +88,7 @@ class Marathon(object):
         return map(MarathonApp, requests.get(self.get_marathon_address() + '/v2/apps').json()['apps']) if not TEST else []
 
     def ids_of_apps(self):
-        return map(lambda app: app['id'][1:], self.apps())
+        return map(lambda app: app.id, self.apps())
 
     def app_by_id(self, app_id):
         app = filter(lambda app: app_id in app['id'], self.apps())
