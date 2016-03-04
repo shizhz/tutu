@@ -1,9 +1,10 @@
 String.prototype.hashCode = function() {
-    var hash = 0, i, chr, len;
+    var hash = 0,
+        i, chr, len;
     if (this.length === 0) return hash;
     for (i = 0, len = this.length; i < len; i++) {
-        chr   = this.charCodeAt(i);
-        hash  = ((hash << 5) - hash) + chr;
+        chr = this.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
         hash |= 0; // Convert to 32bit integer
     }
     return hash;
@@ -56,7 +57,7 @@ var TutuWebSocket = TutuWebSocket || (function() {
 
     function init() {
         if (!ws) {
-            ws = new WebSocket("ws://" + location.host +  "/ws/invoke");
+            ws = new WebSocket("ws://" + location.host + "/ws/invoke");
             ws.onmessage = function(evt) {
                 var result = JSON.parse(evt.data);
                 var topic = result['topic'];
@@ -252,21 +253,35 @@ var Tutu = Tutu || (function() {
                 prefetch: '/api/commands'
             });
 
-            $('.typeahead').typeahead({
-                hint: true,
-                highlight: true,
-                minLength: 1,
-                menuConfig: {
-                    position: 'top'
-                }
-            }, {
-                name: 'commands',
-                display: 'name',
-                source: commands,
-                templates: {
-                    header: '<h3 class="suggestion-menu">Commands</h3>'
-                }
+            var apps = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace,
+                queryTokenizer: Bloodhound.tokenizers.obj.whitespace,
+                remote: '/api/marathon/apps'
             });
+
+            $('.typeahead').typeahead({
+                    hint: true,
+                    highlight: true,
+                    minLength: 1,
+                    menuConfig: {
+                        position: 'top'
+                    }
+                }, {
+                    name: 'commands',
+                    display: 'name',
+                    source: commands,
+                    templates: {
+                        header: '<h3 class="suggestion-menu">Commands</h3>'
+                    }
+                }
+//                                      ,{
+//                    name: 'apps',
+//                    source: apps,
+//                    templates: {
+//                        header: '<h3 class="suggestion-menu">Apps</h3>'
+//                    }
+//                                      }
+                                     );
         };
 
         initTabKeyed();
