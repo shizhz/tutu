@@ -7,7 +7,8 @@ DEV = {
     'name': 'dev',
     'marathon_url': 'zk://192.168.0.119:2181,192.168.0.120:2181,192.168.0.121:2181,192.168.0.122:2181,192.168.0.123:2181/marathon-cluster',
     'mesos_url': 'zk://192.168.0.119:2181,192.168.0.120:2181,192.168.0.121:2181,192.168.0.122:2181,192.168.0.123:2181/mesos-cluster',
-    'bamboo_url': 'http://192.168.0.170'
+    'bamboo_url': 'http://192.168.0.170',
+    'api_gateway': 'http://192.168.0.165'
 }
 
 SIT = {
@@ -15,7 +16,8 @@ SIT = {
     'name': 'sit',
     'marathon_url': 'zk://192.168.0.119:2181,192.168.0.120:2181,192.168.0.121:2181,192.168.0.122:2181,192.168.0.123:2181/marathon-cluster',
     'mesos_url': 'zk://192.168.0.119:2181,192.168.0.120:2181,192.168.0.121:2181,192.168.0.122:2181,192.168.0.123:2181/mesos-cluster',
-    'bamboo_url': 'http://192.168.0.175'
+    'bamboo_url': 'http://192.168.0.175',
+    'api_gateway': 'http://192.168.0.164'
 }
 
 UAT = {
@@ -23,7 +25,8 @@ UAT = {
     'name': 'uat',
     'marathon_url': 'zk://172.16.10.35:2181,172.16.10.36:2181,172.16.10.37:2181,172.16.10.38:2181,172.16.10.43:2181/marathon-cluster',
     'mesos_url': 'zk://172.16.10.35:2181,172.16.10.36:2181,172.16.10.37:2181,172.16.10.38:2181,172.16.10.43:2181/mesos-cluster',
-    'bamboo_url': 'http://172.16.10.40'
+    'bamboo_url': 'http://172.16.10.40',
+    'api_gateway': 'http://192.168.0.164'
 }
 
 PROD = {
@@ -31,7 +34,8 @@ PROD = {
     'name': 'prod',
     'marathon_url': 'zk://10.10.12.41:2181,10.10.12.42:2181,10.10.12.43:2181,10.10.12.44:2181,10.10.12.45:2181/marathon-cluster',
     'mesos_url': 'zk://10.10.12.41:2181,10.10.12.42:2181,10.10.12.43:2181,10.10.12.44:2181,10.10.12.45:2181/mesos-cluster',
-    'bamboo_url': 'http://192.168.0.170'
+    'bamboo_url': 'http://192.168.0.170',
+    'api_gateway': 'http://192.168.0.164'
 }
 
 CACHE = {
@@ -59,8 +63,10 @@ def help_info():
        Marathon: {marathon}
        Mesos: {mesos}
        Bamboo: {bamboo}
+       API-Gateway: {api_gateway}
     """.format(marathon=env['marathon_url'],
                mesos=env['mesos_url'],
                env_name=env['name'],
+               api_gateway=env['api_gateway'],
                bamboo=env['bamboo_url'])
     return '    Jenkins Address: ' + Jenkins_url + ''.join(map(format_env_config_info, envs))
