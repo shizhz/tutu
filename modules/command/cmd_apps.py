@@ -26,25 +26,30 @@ class AppsCommand(Command):
     def __init__(self, env=None):
         self.env = env
 
-    def _env_app_prefixes(self):
-        env_config = env_config_of(self.env)
+    def envs(self):
+        return [env_config_of(self.env)] if self.env else envs
 
-        return [env_config_of['app-prefix']] if env_config else map(lambda e: e['app-prefix'], envs)
+    def is_env_valid(self):
+        return bool(env_config_of(self.env)) if self.env else True
 
     def execute(self):
+        if not self.is_env_valid():
+            return "Invalid environment: {0}. Available environments are: {1}".format(self.env, ', '.join(map(lambda e: e['name'], envs)))
+
         ms = filter(lambda a: a, [marathon_of_env(self.env)] if self.env else marathons)
+        apps_ids = map(lambda app: app.id, itertools.chain.from_iterable(map(Marathon.apps, ms)))
 
-        apps = map(Marathon.apps, ms)
-        apps_ids = map(lambda app: app.id, itertools.chain.from_iterable(apps))
+        env_apps_tmpl = """
+Environment - {0}:
+  {1}
+        """
 
-        if self.env:
-            apps_ids = filter(lambda app_id: app_id.startswith(self.env), apps_ids)
+        result = ""
 
-        apps_group = map(lambda app_prefix: filter(lambda app_id: app_id.upper().startswith(app_prefix.upper()), app_ids), self._env_app_prefixes())
+        for e in self.envs():
+            result += env_apps_tmpl.format(e['name'].upper(), ', '.join(filter(lambda app_id: app_id.upper().startswith(e['app-prefix'].upper()), apps_ids)))
 
-        result = ', '.join(apps_ids)
-
-        return result if result else "No environment found: " + self.env
+        return result
 
 class AppsCommandParser(object):
     support = cmd_indicator(AppsCommand)
