@@ -4,14 +4,14 @@ import logging
 
 from cmd import Command, validator, cmd_indicator
 from cmd_sh import ShCommand
-from cmd_apps import AppsCommand
+from cmd_apps import AppsCommand, AppInfoCommand
 from cmd_config import ConfigCommand
 from cmd_share import ShareCommand
 from models import CommandInfo
 from exceptions import UnknownCommandException
 
 logger = logging.getLogger('tutu.modules.command.' + __name__)
-_all_commands = [ShCommand, AppsCommand, ConfigCommand, ShareCommand]
+_all_commands = [ShCommand, AppsCommand, ConfigCommand, ShareCommand, AppInfoCommand]
 
 class HelpCommand(Command):
     """

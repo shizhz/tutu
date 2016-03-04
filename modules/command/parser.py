@@ -11,7 +11,7 @@ from exceptions import UnknownCommandException
 
 
 logger = logging.getLogger('tutu.modules.command.' + __name__)
-all_parsers = [cmd_help.HelpCommandParser(), cmd_sh.ShCommandParser(), cmd_config.ConfigCommandParser(), cmd_share.ShareCommandParser(), cmd_apps.AppsCommandParser()]
+all_parsers = [cmd_help.HelpCommandParser(), cmd_sh.ShCommandParser(), cmd_config.ConfigCommandParser(), cmd_share.ShareCommandParser(), cmd_apps.AppsCommandParser(), cmd_apps.AppInfoCommandParser()]
 
 class CommandParser(object):
     parsers = all_parsers

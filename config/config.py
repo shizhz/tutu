@@ -49,6 +49,9 @@ def env_config_of(env_name):
 
     return evs[0] if len(evs) > 0 else None
 
+def env_config_for_zk(zk):
+    return filter(lambda env: env['marathon_url'] == zk, envs)[0]
+
 def help_info():
     return """
     Jenkins Address: {jenkins}

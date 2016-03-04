@@ -64,3 +64,49 @@ class AppsCommandParser(object):
         else:
             return AppsCommand()
 
+class AppInfoCommand(Command):
+    """
+    NAME: appinfo
+
+    SYNOPSIS: appinfo <app_id> <app_id>
+
+    DESC: Display detail information for provided apps
+    """
+
+    name = 'appinfo'
+    alias = ['ai']
+
+    def __init__(self, target_apps):
+        self.target_apps = target_apps
+
+    def execute(self):
+        apps = filter(lambda app: app.id in self.target_apps, itertools.chain.from_iterable(map(Marathon.apps, marathons)))
+        apps_ids = map(lambda app: app.id, apps)
+        result = []
+        for app_id in self.target_apps:
+            if app_id in apps_ids:
+                app = filter(lambda a: a.id == app_id, apps)[0]
+                app_info = "App Id: {0}".format(app.id)
+                result.append("""
+ App Id: {0}
+ Cpus: {cpus}
+ Mem: {mem}M
+ Instances: {ins}
+ Bamboo address:
+        {a_addr}
+ Task info: {task_info}
+ Container info: {c_info} """.format(app.id, cpus=app.cpus, mem=app.mem, ins=app.instances, c_info=app.container_info(), task_info=app.task_info(), a_addr=app.access_address()))
+            else:
+                result.append('App Id: {0} - Info not found'.format(app_id))
+
+        return '\n'.join(result)
+
+class AppInfoCommandParser(object):
+    support = cmd_indicator(AppInfoCommand)
+
+    @validator
+    def is_valid(self, txt):
+        return self.support(txt) and len(txt.split()) >= 2
+
+    def parse(self, txt):
+        return AppInfoCommand(txt.split()[1:])
