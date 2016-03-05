@@ -68,16 +68,37 @@ class AppInfoCommand(Command):
     """
     NAME: appinfo
 
-    SYNOPSIS: appinfo <app_id> <app_id>
+    SYNOPSIS: appinfo <app_id> <app_id> <full>
 
-    DESC: Display detail information for provided apps
+    DESC: Display detail information for provided apps. Set flag `full` to get verbose information
     """
 
     name = 'appinfo'
     alias = ['ai']
 
-    def __init__(self, target_apps):
+    def __init__(self, target_apps, verbose=False):
         self.target_apps = target_apps
+        self.verbose = verbose
+
+    def verbose_info(self, app):
+        return """
+ App Id: {0}
+ Cpus: {cpus}
+ Mem: {mem}M
+ Instances: {ins}
+ Bamboo address:
+        {a_addr}
+ Task info: {task_info}
+ Container info: {c_info} """.format(app.id, cpus=app.cpus, mem=app.mem, ins=app.instances, c_info=app.container_info(), task_info=app.task_info(), a_addr=app.access_address())
+
+    def short_info(self, app):
+        return """
+ App Id: {0}
+ Bamboo address:
+        {a_addr}
+ Task info: {task_info}
+ Container info: {c_info} """.format(app.id, c_info=app.container_info(), task_info=app.task_info(), a_addr=app.access_address())
+
 
     def execute(self):
         apps = filter(lambda app: app.id in self.target_apps, itertools.chain.from_iterable(map(Marathon.apps, marathons)))
@@ -86,16 +107,10 @@ class AppInfoCommand(Command):
         for app_id in self.target_apps:
             if app_id in apps_ids:
                 app = filter(lambda a: a.id == app_id, apps)[0]
-                app_info = "App Id: {0}".format(app.id)
-                result.append("""
- App Id: {0}
- Cpus: {cpus}
- Mem: {mem}M
- Instances: {ins}
- Bamboo address:
-        {a_addr}
- Task info: {task_info}
- Container info: {c_info} """.format(app.id, cpus=app.cpus, mem=app.mem, ins=app.instances, c_info=app.container_info(), task_info=app.task_info(), a_addr=app.access_address()))
+                if self.verbose:
+                    result.append(self.verbose_info(app))
+                else:
+                    result.append(self.short_info(app))
             else:
                 result.append('App Id: {0} - Info not found'.format(app_id))
 
@@ -109,4 +124,8 @@ class AppInfoCommandParser(object):
         return self.support(txt) and len(txt.split()) >= 2
 
     def parse(self, txt):
-        return AppInfoCommand(txt.split()[1:])
+        cmd_segs = txt.lower().split()
+        if 'full' in cmd_segs[1:]:
+            return AppInfoCommand([c for c in cmd_segs[1:] if c != 'full'], verbose=True)
+        else:
+            return AppInfoCommand(txt.split()[1:])
