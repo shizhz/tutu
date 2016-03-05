@@ -11,6 +11,7 @@ from handlers.base import BaseHandler
 from modules.mesos.marathon import marathons, MarathonApp
 from modules.cache import CURRENT as cache
 from modules.util import val_from_json, has_val
+from config.config import TEST
 
 logger = logging.getLogger('tutu.handlers.' + __name__)
 
@@ -69,5 +70,9 @@ class MarathonEventsHandler(BaseHandler):
 
 class MarathonAppsListHandler(BaseHandler):
     def get(self):
-        apps_ids = map(lambda m: m.ids_of_apps(), marathons)
-        self.write_json([x for y in apps_ids for x in y])
+        if TEST:
+            apps_ids = [['dev-currency-service', 'dev-cms'], ['sit-currency-service', 'sit-app1']]
+        else:
+            apps_ids = map(lambda m: m.ids_of_apps(), marathons)
+
+        self.write_json(map(lambda app_id: {"name": app_id}, [x for y in apps_ids for x in y]))

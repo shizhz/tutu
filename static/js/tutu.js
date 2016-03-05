@@ -240,48 +240,45 @@ var Tutu = Tutu || (function() {
         };
 
         var initSuggestionEngine = function() {
+            function last_token(str) {
+                if (str.endsWith(' ')) {
+                    // don't show menu when enter whitespace
+                    return ['_impossible_token_'];
+                }
+                // Only return the last word as query token
+                return [].slice.call(str.trim().split(/ +/), -1);
+            }
+
             var commands = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-                queryTokenizer: function(str) {
-                    if (str.endsWith(' ')) {
-                        // don't show menu when enter whitespace
-                        return ['_impossible_token_'];
-                    }
-                    // Only return the last word as query token
-                    return [].slice.call($.trim(str).split(/\W+/), -1);
-                },
+                queryTokenizer: last_token,
                 prefetch: '/api/commands'
             });
 
-            var apps = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace,
-                queryTokenizer: Bloodhound.tokenizers.obj.whitespace,
-                remote: '/api/marathon/apps'
-            });
-
             $('.typeahead').typeahead({
-                    hint: true,
-                    highlight: true,
-                    minLength: 1,
-                    menuConfig: {
-                        position: 'top'
-                    }
-                }, {
-                    name: 'commands',
-                    display: 'name',
-                    source: commands,
-                    templates: {
-                        header: '<h3 class="suggestion-menu">Commands</h3>'
-                    }
+                hint: true,
+                highlight: true,
+                minLength: 1,
+                menuConfig: {
+                    position: 'top'
                 }
-//                                      ,{
-//                    name: 'apps',
-//                    source: apps,
-//                    templates: {
-//                        header: '<h3 class="suggestion-menu">Apps</h3>'
-//                    }
-//                                      }
-                                     );
+            }, [{
+                name: 'commands',
+                display: 'name',
+                source: commands,
+                templates: {
+                    header: '<h3 class="suggestion-menu">Commands</h3>'
+                }
+            }
+//                , {
+//                name: 'apps',
+//                source: apps,
+//                display: 'name',
+//                templates: {
+//                    header: '<h3 class="suggestion-menu">Apps</h3>'
+//                }
+//                }
+               ]);
         };
 
         initTabKeyed();

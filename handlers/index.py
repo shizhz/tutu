@@ -3,6 +3,7 @@
 from handlers.base import BaseHandler
 
 import logging
+
 logger = logging.getLogger('tutu.' + __name__)
 
 class IndexHandler(BaseHandler):
