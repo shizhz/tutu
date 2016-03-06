@@ -16,28 +16,28 @@ class AppsCommand(Command):
     """
     NAME: apps
 
-    SYNOPSIS: apps <env>
+    SYNOPSIS: apps <keywords>
 
-    DESC: list all apps, <env> is optional
+    DESC: list all apps whose id include keywords. If <keywords> is not presented, list all apps in all environments
     """
     name = 'apps'
     alias = []
 
-    def __init__(self, env=None):
-        self.env = env
+    def __init__(self, keywords=None):
+        self.keywords = keywords
 
-    def envs(self):
-        return [env_config_of(self.env)] if self.env else envs
-
-    def is_env_valid(self):
-        return bool(env_config_of(self.env)) if self.env else True
+    def filter_apps_by_keywords(self):
+        apps_ids = map(lambda app: app.id, itertools.chain.from_iterable(map(Marathon.apps, marathons)))
+        if self.keywords:
+            return filter(lambda app_id: all([map(lambda kw: kw in app_id)]), apps_ids)
+        else:
+            return apps_ids
 
     def execute(self):
-        if not self.is_env_valid():
-            return "Invalid environment: {0}. Available environments are: {1}".format(self.env, ', '.join(map(lambda e: e['name'], envs)))
+        apps_ids = self.filter_apps_by_keywords()
 
-        ms = filter(lambda a: a, [marathon_of_env(self.env)] if self.env else marathons)
-        apps_ids = map(lambda app: app.id, itertools.chain.from_iterable(map(Marathon.apps, ms)))
+        if not apps_ids:
+            return "No apps found!"
 
         env_apps_tmpl = """
 Environment - {0}:
@@ -56,11 +56,11 @@ class AppsCommandParser(object):
 
     @validator
     def is_valid(self, txt):
-        return self.support(txt) and len(txt.split()) <= 2
+        return self.support(txt)
 
     def parse(self, txt):
-        if len(txt.split()) == 2:
-            return AppsCommand(env=txt.split()[-1])
+        if len(txt.split()) >= 2:
+            return AppsCommand(keywords=txt.split()[1:])
         else:
             return AppsCommand()
 
