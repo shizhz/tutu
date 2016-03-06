@@ -101,7 +101,7 @@ class AppInfoCommand(Command):
 
 
     def execute(self):
-        apps = filter(lambda app: app.id in self.target_apps, itertools.chain.from_iterable(map(Marathon.apps, marathons)))
+        apps = filter(lambda app: some(map(lambda ta: ta in app.id, self.target_apps)), itertools.chain.from_iterable(map(Marathon.apps, marathons)))
         apps_ids = map(lambda app: app.id, apps)
         result = []
         for app_id in self.target_apps:
