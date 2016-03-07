@@ -38,8 +38,8 @@ class MarathonEventsHandler(BaseHandler):
             cls.registry[evt_type] = handler
 
     def deployment_events_handler(self):
-        marathon_apps = map(MarathonApp, val_from_json(self.evt_data, 'plan.target.apps'))
         marathon = filter(lambda m: m.contains_ip(self.request.remote_ip), marathons)[0]
+        marathon_apps = map(lambda ma: MarathonApp(marathon, ma), val_from_json(self.evt_data, 'plan.target.apps'))
         logger.debug("Cache apps info for Marathon: {0}".format(marathon.id))
         cache.set_cache(marathon.cache_key, marathon_apps)
 
