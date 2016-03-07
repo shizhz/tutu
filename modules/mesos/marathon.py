@@ -91,13 +91,16 @@ class Marathon(object):
     def ids_of_apps(self):
         return map(lambda app: app.id, self.apps())
 
-    def app_by_id(self, app_id):
-        app = filter(lambda app: app_id in app['id'], self.apps())
+    def apps_by_id_contains(self, app_id):
+        apps = filter(lambda app: app_id in app.id, self.apps())
 
-        if not app:
+        if not apps:
             raise AppNotFoundException(app_id)
 
-        return MarathonApp(self, app[0])
+        return apps
+
+    def app_by_id(self, app_id):
+        return self.apps_by_id_contains(app_id)[0]
 
     @gen.coroutine
     def register_callback(self, callback):
@@ -194,13 +197,15 @@ class MarathonApp(BaseInfo):
 
             return '\n\t'.join(mappings)
 
-    def task_info(self):
+    @property
+    def tasks(self):
         # TODO: consider cache task info to speed up.
         tasks_url = self.marathon.get_marathon_address().rstrip('/') + '/v2/apps/' + self.id + '/tasks'
         logger.debug('Fetching task info for {0} : {1}'.format(self.id, tasks_url))
-        tasks = map(lambda t: MarathonTask(self, t), requests.get(tasks_url).json()['tasks'])
+        return map(lambda t: MarathonTask(self, t), requests.get(tasks_url).json()['tasks'])
 
-        return '\n\t'.join(map(str, tasks))
+    def task_info(self):
+        return '\n\t'.join(map(str, self.tasks))
 
     @property
     def cpus(self):
@@ -214,8 +219,11 @@ class MarathonApp(BaseInfo):
     def instances(self):
         return self._val_of_key('instances')
 
+    def is_dockerized(self):
+        return self._has_val('container') and self._val_of_key('container.type') == 'DOCKER'
+
     def docker_container_info(self):
-        if self._has_val('container') and self._val_of_key('container.type') == 'DOCKER':
+        if self.is_dockerized():
             return DockerContainerInfo(self._val_of_key('container'))
         else:
             return None

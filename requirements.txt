@@ -5,3 +5,4 @@ kazoo==2.2.1
 protobuf==2.6.1
 mesos.interface=0.26.0
 requests==2.7.0
+paramiko

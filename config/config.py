@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import os
 
 TEST = False
+PUBKEY_LOCATION = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'id_rsa.pub')
 Jenkins_url = 'jenkins_url_here'
 DEV = {
     'app-prefix': 'dev-',
