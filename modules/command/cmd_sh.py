@@ -56,7 +56,7 @@ class ShCommand(Command):
 
     def cmd(self):
         if 'cat' == self.sh[0]:
-            self.notification = 'Command `cat` has a very high possibility to cause the whole system blacked. Use `tail -n 100` instead.'
+            self.notification = 'Command `cat` has a very high possibility to cause the whole system blocked. Use `tail -n 100` instead.\n'
             return ' '.join(['tail -n 100'] + self.sh[1:])
         if 'tail' == self.sh[0] and '-f' in self.sh:
             self.notification = 'Drop option `-f` due to it will block the whole system for current implementation.\n'
