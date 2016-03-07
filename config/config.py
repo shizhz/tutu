@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-TEST = True
+TEST = False
 Jenkins_url = 'jenkins_url_here'
 DEV = {
     'app-prefix': 'dev-',

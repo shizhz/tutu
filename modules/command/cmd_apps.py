@@ -29,7 +29,7 @@ class AppsCommand(Command):
     def filter_apps_by_keywords(self):
         apps_ids = map(lambda app: app.id, itertools.chain.from_iterable(map(Marathon.apps, marathons)))
         if self.keywords:
-            return filter(lambda app_id: all([map(lambda kw: kw in app_id)]), apps_ids)
+            return filter(lambda app_id: all(map(lambda kw: kw in app_id, self.keywords)), apps_ids)
         else:
             return apps_ids
 
@@ -46,8 +46,10 @@ Environment - {0}:
 
         result = ""
 
-        for e in self.envs():
-            result += env_apps_tmpl.format(e['name'].upper(), ', '.join(filter(lambda app_id: app_id.upper().startswith(e['app-prefix'].upper()), apps_ids)))
+        for e in envs:
+            apps_ids_in_env = filter(lambda app_id: app_id.upper().startswith(e['app-prefix'].upper()), apps_ids)
+            if len(apps_ids_in_env):
+                result += env_apps_tmpl.format(e['name'].upper(), ', '.join(apps_ids_in_env))
 
         return result
 
@@ -89,7 +91,7 @@ class AppInfoCommand(Command):
  Bamboo address:
         {a_addr}
  Task info: {task_info}
- Container info: {c_info} """.format(app.id, cpus=app.cpus, mem=app.mem, ins=app.instances, c_info=app.container_info(), task_info=app.task_info(), a_addr=app.access_address())
+ Container info: {c_info} """.format(app.id, cpus=app.cpus, mem=app.mem, ins=app.instances, c_info=app.container_info(verbose=True), task_info=app.task_info(), a_addr=app.access_address())
 
     def short_info(self, app):
         return """
@@ -97,24 +99,16 @@ class AppInfoCommand(Command):
  Bamboo address:
         {a_addr}
  Task info: {task_info}
- Container info: {c_info} """.format(app.id, c_info=app.container_info(), task_info=app.task_info(), a_addr=app.access_address())
+ Container info: {c_info} """.format(app.id, c_info=app.container_info(verbose=False), task_info=app.task_info(), a_addr=app.access_address())
 
 
     def execute(self):
-        apps = filter(lambda app: some(map(lambda ta: ta in app.id, self.target_apps)), itertools.chain.from_iterable(map(Marathon.apps, marathons)))
-        apps_ids = map(lambda app: app.id, apps)
-        result = []
-        for app_id in self.target_apps:
-            if app_id in apps_ids:
-                app = filter(lambda a: a.id == app_id, apps)[0]
-                if self.verbose:
-                    result.append(self.verbose_info(app))
-                else:
-                    result.append(self.short_info(app))
-            else:
-                result.append('App Id: {0} - Info not found'.format(app_id))
+        apps = filter(lambda app: any(map(lambda ta: ta in app.id, self.target_apps)), itertools.chain.from_iterable(map(Marathon.apps, marathons)))
 
-        return '\n'.join(result)
+        if len(apps) == 0:
+            return "No App found."
+
+        return '\n'.join(map(lambda app: self.verbose_info(app) if self.verbose else self.short_info(app), apps))
 
 class AppInfoCommandParser(object):
     support = cmd_indicator(AppInfoCommand)

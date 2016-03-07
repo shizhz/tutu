@@ -220,8 +220,9 @@ class MarathonApp(BaseInfo):
         else:
             return None
 
-    def container_info(self):
-        return str(self.docker_container_info())
+    def container_info(self, verbose=False):
+        ci = self.docker_container_info()
+        return ci.to_str(verbose=verbose) if ci else "<No Container Info>"
 
     @property
     def version(self):
@@ -308,6 +309,15 @@ class DockerContainerInfo(BaseInfo):
         Parameters:
                 {6}
         """.format(self.image, self.network, self.privileged, self.force_pull_image, self.str_port_mappings(), self.str_volumes(), self.str_parameters())
+
+    def to_str(self, verbose=False):
+        return """
+        Image: {0}
+        Port Mappings:
+                {1}
+        Volumes:
+                {2}
+        """.format(self.image, self.str_port_mappings(), self.str_volumes()) if not verbose else str(self)
 
 
 marathons = map(lambda zk: Marathon(zk), marathon_zks)
