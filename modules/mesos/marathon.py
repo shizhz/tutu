@@ -65,7 +65,6 @@ class MarathonResolver(object):
 class Marathon(object):
     def __init__(self, zk):
         self.zk = zk
-        self.env_config = env_config_for_zk(zk)
         self.resolver = MarathonResolver(zk)
         self.addresses = self.resolver.resolve()
         self.refreshed = False
@@ -184,8 +183,13 @@ class MarathonApp(BaseInfo):
     def id(self):
         return self.app_info['id'][1:]
 
+    def env_config(self):
+        evs = filter(lambda e: e.get('app-prefix') and self.id.startswith(e.get('app-prefix')), envs)
+
+        return evs[0] if len(evs) > 0 else env_config_for_zk(self.marathon.z)
+
     def access_address(self):
-        bamboo_address = self.marathon.env_config['bamboo_url']
+        bamboo_address = self.env_config()['bamboo_url']
         if self._has_val('env.BAMBOO_HTTP_PORTS'):
             bamboo_ports = self._val_of_key('env.BAMBOO_HTTP_PORTS').split(',')
             docker_port_mappings = map(lambda dp: dp['containerPort'], self._val_of_key("container.docker.portMappings"))
