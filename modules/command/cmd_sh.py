@@ -88,7 +88,7 @@ class ShCommand(Command):
                 {1}""".format(self.cmd(), '\n\t'.join(err))
 
     def execute(self):
-        apps = itertools.chain.from_iterable(map(lambda marathon: marathon.apps_by_id_contains(self.marathon_app_id), marathons))
+        apps = list(itertools.chain.from_iterable(map(lambda marathon: marathon.apps_by_id_contains(self.marathon_app_id), marathons)))
 
         if len(apps) > 1:
             return 'More than one app found: {0}. Please choose the one you are interested.'.format(', '.join(map(lambda app: app.id, apps)))
@@ -116,4 +116,4 @@ class ShCommandParser(object):
         - sh dev-some-service ls /opt/logs
         - sh dev-some-service tail -f /opt/logs/out.log
         """
-        return ShCommand(txt.split()[1], txt.split(2:))
+        return ShCommand(txt.split()[1], txt.split()[2:])
