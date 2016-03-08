@@ -81,11 +81,11 @@ class ShCommand(Command):
             err = stderr.readlines()
 
             if out:
-                return self.notification + '\n\t'.join(out)
+                return self.notification + ''.join(out)
             elif err:
                 return self.notification + """
         Something wrong happened while executing command: {0}:
-                {1}""".format(self.cmd(), '\n\t'.join(err))
+                {1}""".format(self.cmd(), ''.join(err))
 
     def execute(self):
         apps = list(itertools.chain.from_iterable(map(lambda marathon: marathon.apps_by_id_contains(self.marathon_app_id), marathons)))
