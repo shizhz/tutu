@@ -219,6 +219,8 @@ class MarathonApp(BaseInfo):
                 mappings.append("Service on Port: " + str(docker_port_mappings[i]) + " is on Bamboo:  " + bamboo_addresses[i])
 
             return '\n\t'.join(mappings)
+        else:
+            return "No bamboo config found"
 
     @property
     def tasks(self):
@@ -307,7 +309,11 @@ class DockerContainerInfo(BaseInfo):
         return self._val_of_key('docker.portMappings')
 
     def str_port_mappings(self):
-        return '\n\t\t'.join(map(lambda pm: "{0} -> {1}".format(pm['containerPort'], "Random Port Mapping" if pm['hostPort'] == 0 else pm['hostPort']), self.port_mappings))
+        if self.port_mappings:
+            pm = map(lambda pm: "{0} -> {1}".format(pm['containerPort'], "Random Port Mapping" if pm['hostPort'] == 0 else pm['hostPort']), self.port_mappings)
+            return '\n\t\t'.join(pm)
+        else:
+            return "No port mappings found"
 
     def str_volumes(self):
         return '\n\t\t'.join(map(str, self.volumes))
