@@ -73,6 +73,7 @@ class AppInfoCommand(Command):
     SYNOPSIS: appinfo <app_id> <app_id> <full>
 
     DESC: Display detail information for provided apps. Set flag `full` to get verbose information, at least one <app_id> should be provided
+          You can also use pattern like <app_id_keyword>$ to match all apps whose id endswith <app_id_keyword>, or ^<app_id_keyword> to match all apps whose id starts with <app_id_keyword>
     """
 
     name = 'appinfo'
