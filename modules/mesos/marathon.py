@@ -92,15 +92,7 @@ class Marathon(object):
         return map(lambda app: app.id, self.apps())
 
     def apps_by_id_contains(self, app_id):
-        apps = filter(lambda app: app_id in app.id, self.apps())
-
-        if not apps:
-            raise exceptions.AppNotFoundException(app_id)
-
-        return apps
-
-    def app_by_id(self, app_id):
-        return self.apps_by_id_contains(app_id)[0]
+        return filter(lambda app: app_id in app.id, self.apps())
 
     @gen.coroutine
     def register_callback(self, callback):
