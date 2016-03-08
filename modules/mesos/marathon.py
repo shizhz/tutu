@@ -188,16 +188,42 @@ class MarathonApp(BaseInfo):
 
         return evs[0] if len(evs) > 0 else env_config_for_zk(self.marathon.z)
 
-    def access_address(self):
+    def api_gateway_address(self):
+        api_gateway = self.env_config()['api_gateway']
+        all_apis = requests.get(api_gateway + ':8001/apis').json()['data']
+
+        bamboo_addresses = self.bamboo_addresses()
+
+        apis = filter(lambda api: api.get('upstream_url') in bamboo_addresses, all_apis)
+
+        api_info = [api_gateway + ':8000' + api['request_path'] for api in apis]
+
+        logger.debug('Found api address: {0}'.format(str(api_info)))
+
+        return api_info
+
+    def bamboo_addresses(self):
         bamboo_address = self.env_config()['bamboo_url']
         if self._has_val('env.BAMBOO_HTTP_PORTS'):
             bamboo_ports = self._val_of_key('env.BAMBOO_HTTP_PORTS').split(',')
+
+            return [bamboo_address + ':' + port for port in bamboo_ports]
+
+        return []
+
+    def str_api_gateway_address(self):
+        api_gateway = self.api_gateway_address()
+        return '\n\t'.join(api_gateway) if api_gateway else 'Not configured behinded API-Gateway yet.'
+
+    def str_bamboo_address(self):
+        if self._has_val('env.BAMBOO_HTTP_PORTS'):
+            bamboo_addresses = self.bamboo_addresses()
             docker_port_mappings = map(lambda dp: dp['containerPort'], self._val_of_key("container.docker.portMappings"))
 
             mappings = []
 
-            for i in range(len(bamboo_ports)):
-                mappings.append("Service on Port: " + str(docker_port_mappings[i]) + " is on Bamboo:  " + bamboo_address + ':' + bamboo_ports[i])
+            for i in range(len(docker_port_mappings)):
+                mappings.append("Service on Port: " + str(docker_port_mappings[i]) + " is on Bamboo:  " + bamboo_addresses[i])
 
             return '\n\t'.join(mappings)
 

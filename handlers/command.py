@@ -65,6 +65,10 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
             logger.exception(e)
             topic = 'internal_error'
             result = """The command other people shared to you has been expired. Please check out the above message about how to use Tutu"""
+        except InvalidCommandException, e:
+            logger.exception(e)
+            topic = 'internal_error'
+            result = "Seems you are not using the command the right way. Tey `help` command to get help info."
         except Exception, e:
             logger.exception(e)
             topic = 'internal_error'

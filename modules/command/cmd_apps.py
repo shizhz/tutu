@@ -72,7 +72,7 @@ class AppInfoCommand(Command):
 
     SYNOPSIS: appinfo <app_id> <app_id> <full>
 
-    DESC: Display detail information for provided apps. Set flag `full` to get verbose information
+    DESC: Display detail information for provided apps. Set flag `full` to get verbose information, at least one <app_id> should be provided
     """
 
     name = 'appinfo'
@@ -90,16 +90,20 @@ class AppInfoCommand(Command):
  Instances: {ins}
  Bamboo address:
         {a_addr}
+ API-Gateway:
+        {api_gateway}
  Task info: {task_info}
- Container info: {c_info} """.format(app.id, cpus=app.cpus, mem=app.mem, ins=app.instances, c_info=app.container_info(verbose=True), task_info=app.task_info(), a_addr=app.access_address())
+ Container info: {c_info} """.format(app.id, cpus=app.cpus, mem=app.mem, ins=app.instances, c_info=app.container_info(verbose=True), task_info=app.task_info(), a_addr=app.str_bamboo_address(), api_gateway=app.str_api_gateway_address())
 
     def short_info(self, app):
         return """
  App Id: {0}
  Bamboo address:
         {a_addr}
+ API-Gateway:
+        {api_gateway}
  Task info: {task_info}
- Container info: {c_info} """.format(app.id, c_info=app.container_info(verbose=False), task_info=app.task_info(), a_addr=app.access_address())
+ Container info: {c_info} """.format(app.id, c_info=app.container_info(verbose=False), task_info=app.task_info(), a_addr=app.str_bamboo_address(), api_gateway=app.str_api_gateway_address())
 
 
     def execute(self):
