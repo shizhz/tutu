@@ -107,7 +107,7 @@ var TutuWebSocket = TutuWebSocket || (function() {
 
 var Tutu = Tutu || (function() {
     function rawInput() {
-        return $('#message-input').val();
+        return $.trim($('#message-input').val());
     };
 
     function clearInput() {
@@ -209,16 +209,18 @@ var Tutu = Tutu || (function() {
             removeSuggestionMenu();
             if (!suggestionMenuVisible()) {
                 var cmd = rawInput();
-                var shareCode = cmd.hashCode();
-                addMsgForUser({
-                    "shareCode": shareCode,
-                    "message": cmd
-                });
-                clearInput();
-                TutuWebSocket.send({
-                    "shareCode": shareCode,
-                    "command": cmd
-                });
+                if (!!cmd) {
+                    var shareCode = cmd.hashCode();
+                    addMsgForUser({
+                        "shareCode": shareCode,
+                        "message": cmd
+                    });
+                    clearInput();
+                    TutuWebSocket.send({
+                        "shareCode": shareCode,
+                        "command": cmd
+                    });
+                }
             }
         });
 
