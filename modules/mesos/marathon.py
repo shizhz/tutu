@@ -11,6 +11,7 @@ import kazoo.exceptions
 import requests
 import requests.exceptions
 
+from . import exceptions
 from . import zookeeper
 from .. import log, util
 from modules.cache import CURRENT as cache
@@ -94,7 +95,7 @@ class Marathon(object):
         apps = filter(lambda app: app_id in app.id, self.apps())
 
         if not apps:
-            raise AppNotFoundException(app_id)
+            raise exceptions.AppNotFoundException(app_id)
 
         return apps
 

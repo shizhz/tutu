@@ -12,6 +12,7 @@ from modules.cache import CURRENT as cache
 from modules.command import all_commands
 from modules.command.cmd_share import ShareCommand
 from modules.command.exceptions import *
+from modules.mesos.exceptions import *
 import modules.command.parser as parser
 
 logger = logging.getLogger('tutu.handlers.' + __name__)
@@ -69,6 +70,10 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
             logger.exception(e)
             topic = 'internal_error'
             result = "Seems you are not using the command the right way. Tey `help` command to get help info."
+        except AppNotFoundException, e:
+            logger.exception(e)
+            topic = 'internal_error'
+            result = e.msg
         except Exception, e:
             logger.exception(e)
             topic = 'internal_error'

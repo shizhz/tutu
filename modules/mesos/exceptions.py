@@ -30,5 +30,6 @@ class ZookeeperConnectionException(Exception):pass
 
 class AppNotFoundException(MarathonException):
     def __init__(self, app_id):
+        self.msg = 'App not found with id contains: {0}'.format(app_id)
         self.app_id = app_id
 
