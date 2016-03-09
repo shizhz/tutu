@@ -66,13 +66,3 @@ class MarathonEventsHandler(BaseHandler):
             self.process_marathon_event()
         except Exception, e:
             logger.exception(e)
-            print("Exception happened")
-
-class MarathonAppsListHandler(BaseHandler):
-    def get(self):
-        if TEST:
-            apps_ids = [['dev-currency-service', 'dev-cms'], ['sit-currency-service', 'sit-app1']]
-        else:
-            apps_ids = map(lambda m: m.ids_of_apps(), marathons)
-
-        self.write_json(map(lambda app_id: {"name": app_id}, [x for y in apps_ids for x in y]))

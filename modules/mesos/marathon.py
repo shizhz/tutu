@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function
 import logging
 from tornado import gen
 
+import re
 import requests
 import kazoo.client
 import kazoo.exceptions
@@ -88,22 +89,9 @@ class Marathon(object):
     def resolve_apps(self):
         return map(lambda mi: MarathonApp(self, mi), requests.get(self.get_marathon_address() + '/v2/apps').json()['apps']) if not TEST else []
 
-    def ids_of_apps(self):
-        return map(lambda app: app.id, self.apps())
 
-    @staticmethod
-    def filter_by_pattern(kw):
-        def app_id_contains(app):
-            return kw in app.id
-        def app_id_endswith(app):
-            return app.id.endswith(kw[:-1])
-        def app_id_startswith(app):
-            return app.id.startswith(kw[1:])
-
-        return app_id_endswith if kw.endswith('$') else app_id_startswith if kw.startswith('^') else app_id_contains
-
-    def apps_by_id_pattern(self, app_id):
-        return filter(Marathon.filter_by_pattern(app_id), self.apps())
+    def apps_by_id_pattern(self, pattern):
+        return filter(lambda app: re.match(pattern, app.id), self.apps())
 
     def apps_by_id_patterns(self, patterns):
         return list(itertools.chain.from_iterable(map(lambda p: self.apps_by_id_pattern(p), patterns)))
@@ -193,21 +181,26 @@ class MarathonApp(BaseInfo):
     def env_config(self):
         evs = filter(lambda e: e.get('app-prefix') and self.id.startswith(e.get('app-prefix')), envs)
 
-        return evs[0] if len(evs) > 0 else env_config_for_zk(self.marathon.z)
+        return evs[0] if len(evs) > 0 else env_config_for_zk(self.marathon.zk)
 
     def api_gateway_address(self):
-        api_gateway = self.env_config()['api_gateway']
-        all_apis = requests.get(api_gateway + ':8001/apis').json()['data']
+        try:
+            api_gateway = self.env_config()['api_gateway']
+            all_apis = requests.get(api_gateway + ':8001/apis').json()['data']
 
-        bamboo_addresses = self.bamboo_addresses()
+            bamboo_addresses = self.bamboo_addresses()
 
-        apis = filter(lambda api: api.get('upstream_url') in bamboo_addresses, all_apis)
+            apis = filter(lambda api: api.get('upstream_url') in bamboo_addresses, all_apis)
 
-        api_info = [api_gateway + ':8000' + api['request_path'] for api in apis]
+            api_info = [api_gateway + ':8000' + api['request_path'] for api in apis]
 
-        logger.debug('Found api address: {0}'.format(str(api_info)))
+            logger.debug('Found api address: {0}'.format(str(api_info)))
 
-        return api_info
+            return api_info
+        except KeyError, e:
+            logger.exception(e)
+            logger.warn('Maybe failed to call api-gateway api')
+            return []
 
     def bamboo_addresses(self):
         bamboo_address = self.env_config()['bamboo_url']

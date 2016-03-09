@@ -29,13 +29,10 @@ class AppsCommand(Command):
     def __init__(self, keywords=None):
         self.keywords = keywords
 
-    def find_apps(self):
-        return map(lambda app: app.id, find_apps_by_id_patterns(self.keywords))
-
     def execute(self):
-        apps_ids = self.filter_apps_by_keywords()
+        apps = find_apps_by_id_patterns(self.keywords)
 
-        if not apps_ids:
+        if not apps:
             return "No apps found!"
 
         env_apps_tmpl = """
@@ -46,7 +43,7 @@ Environment - {0}:
         result = ""
 
         for e in envs:
-            apps_ids_in_env = filter(lambda app_id: app_id.upper().startswith(e['app-prefix'].upper()), apps_ids)
+            apps_ids_in_env = filter(lambda app: app.id.upper().startswith(e['app-prefix'].upper()), apps)
             if len(apps_ids_in_env):
                 result += env_apps_tmpl.format(e['name'].upper(), ', '.join(apps_ids_in_env))
 
