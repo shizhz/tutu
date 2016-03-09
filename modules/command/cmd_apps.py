@@ -12,6 +12,9 @@ from modules.mesos.marathon import marathon_of_env, marathons, Marathon
 
 logger = logging.getLogger('tutu.modules.command.' + __name__)
 
+def find_apps_by_id_patterns(patterns):
+    return list(itertools.chain.from_iterable(map(lambda m: m.apps_by_id_patterns(patterns), marathons)))
+
 class AppsCommand(Command):
     """
     NAME: apps
@@ -26,12 +29,8 @@ class AppsCommand(Command):
     def __init__(self, keywords=None):
         self.keywords = keywords
 
-    def filter_apps_by_keywords(self):
-        apps_ids = map(lambda app: app.id, itertools.chain.from_iterable(map(Marathon.apps, marathons)))
-        if self.keywords:
-            return filter(lambda app_id: all(map(lambda kw: kw in app_id, self.keywords)), apps_ids)
-        else:
-            return apps_ids
+    def find_apps(self):
+        return map(lambda app: app.id, find_apps_by_id_patterns(self.keywords))
 
     def execute(self):
         apps_ids = self.filter_apps_by_keywords()
@@ -106,11 +105,8 @@ class AppInfoCommand(Command):
  Task info: {task_info}
  Container info: {c_info} """.format(app.id, c_info=app.container_info(verbose=False), task_info=app.task_info(), a_addr=app.str_bamboo_address(), api_gateway=app.str_api_gateway_address())
 
-    def find_apps(self):
-        return filter(lambda app: any(map(lambda ta: Marathon.filter_by_kw_for_app(ta)(app), self.target_apps)), itertools.chain.from_iterable(map(Marathon.apps, marathons)))
-
     def execute(self):
-        apps = self.find_apps()
+        apps = find_apps_by_id_patterns(self.target_apps)
 
         if len(apps) == 0:
             return "No App found."

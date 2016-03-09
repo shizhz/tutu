@@ -92,7 +92,7 @@ class Marathon(object):
         return map(lambda app: app.id, self.apps())
 
     @staticmethod
-    def filter_by_kw_for_app(kw):
+    def filter_by_pattern(kw):
         def app_id_contains(app):
             return kw in app.id
         def app_id_endswith(app):
@@ -102,8 +102,11 @@ class Marathon(object):
 
         return app_id_endswith if kw.endswith('$') else app_id_startswith if kw.startswith('^') else app_id_contains
 
-    def apps_by_id_contains(self, app_id):
-        return filter(Marathon.filter_by_kw_for_app(app_id), self.apps())
+    def apps_by_id_pattern(self, app_id):
+        return filter(Marathon.filter_by_pattern(app_id), self.apps())
+
+    def apps_by_id_patterns(self, patterns):
+        return list(itertools.chain.from_iterable(map(lambda p: self.apps_by_id_pattern(p), patterns)))
 
     @gen.coroutine
     def register_callback(self, callback):

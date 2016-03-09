@@ -88,7 +88,7 @@ class ShCommand(Command):
                 {1}""".format(self.cmd(), ''.join(err))
 
     def execute(self):
-        apps = list(itertools.chain.from_iterable(map(lambda marathon: marathon.apps_by_id_contains(self.marathon_app_id), marathons)))
+        apps = list(itertools.chain.from_iterable(map(lambda marathon: marathon.apps_by_id_pattern(self.marathon_app_id), marathons)))
 
         if len(apps) > 1:
             return 'More than one app found: {0}. Please choose the one you are interested.'.format(', '.join(map(lambda app: app.id, apps)))
