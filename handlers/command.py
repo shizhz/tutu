@@ -61,7 +61,7 @@ class CommandWSHandler(tornado.websocket.WebSocketHandler):
         except UnknownCommandException, e:
             logger.exception(e)
             topic = 'cmd_result'
-            result = """Command not found, please use one of the available commands below:\n {0} """.format(self._available_commands())
+            result = """Command not found, please use one of the available commands below:\n {0} """.format(self._available_commands()) if 'FUCK' not in command.upper() else 'Fuck you!!!'
         except SharedCommandExpiredException, e:
             logger.exception(e)
             topic = 'internal_error'

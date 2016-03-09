@@ -107,17 +107,7 @@ class AppInfoCommand(Command):
  Container info: {c_info} """.format(app.id, c_info=app.container_info(verbose=False), task_info=app.task_info(), a_addr=app.str_bamboo_address(), api_gateway=app.str_api_gateway_address())
 
     def find_apps(self):
-        def filter_by_kw(kw):
-            def app_id_contains(app):
-                return kw in app.id
-            def app_id_endswith(app):
-                return app.id.endswith(kw[:-1])
-            def app_id_startswith(app):
-                return app.id.startswith(kw[1:])
-
-            return app_id_endswith if kw.endswith('$') else app_id_startswith if kw.startswith('^') else app_id_contains
-
-        return filter(lambda app: any(map(lambda ta: filter_by_kw(ta)(app), self.target_apps)), itertools.chain.from_iterable(map(Marathon.apps, marathons)))
+        return filter(lambda app: any(map(lambda ta: Marathon.filter_by_kw_for_app(ta)(app), self.target_apps)), itertools.chain.from_iterable(map(Marathon.apps, marathons)))
 
     def execute(self):
         apps = self.find_apps()
