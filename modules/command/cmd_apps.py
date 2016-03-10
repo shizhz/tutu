@@ -26,11 +26,11 @@ class AppsCommand(Command):
     name = 'apps'
     alias = []
 
-    def __init__(self, keywords=None):
-        self.keywords = keywords
+    def __init__(self, app_id_pattern=['.*']):
+        self.app_id_pattern = app_id_pattern
 
     def execute(self):
-        apps = find_apps_by_id_patterns(self.keywords)
+        apps = find_apps_by_id_patterns(self.app_id_pattern)
 
         if not apps:
             return "No apps found!"
@@ -43,9 +43,9 @@ Environment - {0}:
         result = ""
 
         for e in envs:
-            apps_ids_in_env = filter(lambda app: app.id.upper().startswith(e['app-prefix'].upper()), apps)
-            if len(apps_ids_in_env):
-                result += env_apps_tmpl.format(e['name'].upper(), ', '.join(apps_ids_in_env))
+            apps_in_env = filter(lambda app: app.id.upper().startswith(e['app-prefix'].upper()), apps)
+            if len(apps_in_env):
+                result += env_apps_tmpl.format(e['name'].upper(), ', '.join(map(lambda app: app.id, apps_in_env)))
 
         return result
 
@@ -58,7 +58,7 @@ class AppsCommandParser(object):
 
     def parse(self, txt):
         if len(txt.split()) >= 2:
-            return AppsCommand(keywords=txt.split()[1:])
+            return AppsCommand(app_id_pattern=txt.split()[1:])
         else:
             return AppsCommand()
 

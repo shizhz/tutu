@@ -6,6 +6,7 @@ import logging
 from tornado import gen
 
 import re
+import itertools
 import requests
 import kazoo.client
 import kazoo.exceptions
@@ -91,9 +92,12 @@ class Marathon(object):
 
 
     def apps_by_id_pattern(self, pattern):
-        return filter(lambda app: re.match(pattern, app.id), self.apps())
+        logger.debug('Filtering apps by app id pattern: {0}'.format(str(pattern)))
+        pattern = '.*' + pattern if pattern.endswith('$') else pattern + '.*' if pattern.startswith('^') else pattern
+        return filter(lambda app: re.match(pattern, app.id) or pattern in app.id, self.apps())
 
     def apps_by_id_patterns(self, patterns):
+        print(patterns)
         return list(itertools.chain.from_iterable(map(lambda p: self.apps_by_id_pattern(p), patterns)))
 
     @gen.coroutine
@@ -184,23 +188,33 @@ class MarathonApp(BaseInfo):
         return evs[0] if len(evs) > 0 else env_config_for_zk(self.marathon.zk)
 
     def api_gateway_address(self):
+        api_gateway = self.env_config()['api_gateway']
+        apis_url = api_gateway + ':8001/apis'
+        apis_data = None
         try:
-            api_gateway = self.env_config()['api_gateway']
-            all_apis = requests.get(api_gateway + ':8001/apis').json()['data']
+            logger.debug('Fetching all api data from: {0}'.format(apis_url))
+            apis_data = requests.get(apis_url).json()
+            all_apis = apis_data['data']
+            if apis_data.has_key('data'):
+                bamboo_addresses = self.bamboo_addresses()
 
-            bamboo_addresses = self.bamboo_addresses()
+                apis = filter(lambda api: api.get('upstream_url') in bamboo_addresses, all_apis)
 
-            apis = filter(lambda api: api.get('upstream_url') in bamboo_addresses, all_apis)
+                api_info = [api_gateway + ':8000' + api['request_path'] for api in apis]
 
-            api_info = [api_gateway + ':8000' + api['request_path'] for api in apis]
+                logger.debug('Found api address: {0}'.format(str(api_info)))
 
-            logger.debug('Found api address: {0}'.format(str(api_info)))
-
-            return api_info
-        except KeyError, e:
+                return api_info
+            elif apis_data.has_key('message'):
+                logger.warn("Seems something wrong's happening on API-Gateway: {0}".format(apis_url))
+                return ['Message got from API-Gateway: {0}'.format(apis_url)]
+            else:
+                logger.warn("Response from API-Gateway: {0}".format(str(apis_data)))
+                return ['Unexcepted response from API-Gateway: {0}'.format(str(apis_data))]
+        except requests.ConnectionError, e:
             logger.exception(e)
-            logger.warn('Maybe failed to call api-gateway api')
-            return []
+            logger.warn('Cannt connect to api-gateway: {0}'.format(apis_url))
+            return ["Cann't connect to API-Gateway :{0}".format(apis_url)]
 
     def bamboo_addresses(self):
         bamboo_address = self.env_config()['bamboo_url']
