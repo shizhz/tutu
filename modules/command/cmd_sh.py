@@ -86,6 +86,8 @@ class ShCommand(Command):
                 return self.notification + """
         Something wrong happened while executing command: {0}:
                 {1}""".format(self.cmd(), ''.join(err))
+            else:
+                return "No result!!"
 
     def execute(self):
         apps = list(itertools.chain.from_iterable(map(lambda marathon: marathon.apps_by_id_pattern(self.marathon_app_id), marathons)))
