@@ -2,10 +2,10 @@
 
 from __future__ import print_function
 
-import itertools
 import logging
 
 from config.config import CACHE as cache_cfg, envs, env_config_of
+from modules.util import flat_list
 from modules.cache import CURRENT as cache
 from cmd import Command, validator, cmd_indicator
 from modules.mesos.marathon import marathon_of_env, marathons, Marathon
@@ -13,7 +13,7 @@ from modules.mesos.marathon import marathon_of_env, marathons, Marathon
 logger = logging.getLogger('tutu.modules.command.' + __name__)
 
 def find_apps_by_id_patterns(patterns):
-    return list(itertools.chain.from_iterable(map(lambda m: m.apps_by_id_patterns(patterns), marathons)))
+    return flat_list(map(lambda m: m.apps_by_id_patterns(patterns), marathons))
 
 class AppsCommand(Command):
     """

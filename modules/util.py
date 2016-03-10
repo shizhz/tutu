@@ -92,3 +92,6 @@ def val_from_json(j, key, default=None):
 
 def has_val(j, key):
     return val_from_json(j, key) is not None
+
+def flat_list(nested_list):
+    return list(itertools.chain.from_iterable(nested_list))

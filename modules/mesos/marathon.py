@@ -6,7 +6,6 @@ import logging
 from tornado import gen
 
 import re
-import itertools
 import requests
 import kazoo.client
 import kazoo.exceptions
@@ -16,6 +15,7 @@ import requests.exceptions
 from . import exceptions
 from . import zookeeper
 from .. import log, util
+from modules.util import flat_list
 from modules.cache import CURRENT as cache
 from config.config import marathon_zks, CACHE as cache_cfg, envs, TEST, env_config_for_zk
 
@@ -97,8 +97,7 @@ class Marathon(object):
         return filter(lambda app: re.match(pattern, app.id) or pattern in app.id, self.apps())
 
     def apps_by_id_patterns(self, patterns):
-        print(patterns)
-        return list(itertools.chain.from_iterable(map(lambda p: self.apps_by_id_pattern(p), patterns)))
+        return flat_list(map(lambda p: self.apps_by_id_pattern(p), patterns))
 
     @gen.coroutine
     def register_callback(self, callback):
