@@ -47,6 +47,15 @@ Environment - {0}:
             if len(apps_in_env):
                 result += env_apps_tmpl.format(e['name'].upper(), ', '.join(map(lambda app: app.id, apps_in_env)))
 
+        env_prefixes = map(lambda env: env['app-prefix'].upper(), envs)
+        others = filter(lambda app: all(map(lambda env_prefix: not app.id.upper().startswith(env_prefix), env_prefixes)), apps)
+
+        if len(others):
+            result += """
+Environment - Others:
+  {0}
+            """.format(', '.join(map(lambda o: o.id, others)))
+
         return result if result else "No apps found according current app-prefix for each environment"
 
 class AppsCommandParser(object):
