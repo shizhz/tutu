@@ -5,7 +5,7 @@ TEST = False
 PUBKEY_LOCATION = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'id_rsa.pub')
 Jenkins_url = 'jenkins_url_here'
 DEV = {
-    'app-prefix': 'dev-',
+    'app-prefix': 'dev',
     'name': 'dev',
     'marathon_url': 'zk://192.168.0.119:2181,192.168.0.120:2181,192.168.0.121:2181,192.168.0.122:2181,192.168.0.123:2181/marathon-cluster',
     'mesos_url': 'zk://192.168.0.119:2181,192.168.0.120:2181,192.168.0.121:2181,192.168.0.122:2181,192.168.0.123:2181/mesos-cluster',
