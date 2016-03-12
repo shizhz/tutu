@@ -19,9 +19,9 @@ class AppsCommand(Command):
     """
     NAME: apps
 
-    SYNOPSIS: apps <keywords>
+    SYNOPSIS: apps <pattern>
 
-    DESC: list all apps whose id include keywords. If <keywords> is not presented, list all apps in all environments
+    DESC: list all apps whose id matches provided pattern. If <pattern> is not presented, list all apps in all environments
     """
     name = 'apps'
     alias = []
@@ -75,10 +75,9 @@ class AppInfoCommand(Command):
     """
     NAME: appinfo
 
-    SYNOPSIS: appinfo <app_id> <app_id> <full>
+    SYNOPSIS: appinfo <pattern> <pattern> <full>
 
-    DESC: Display detail information for provided apps. Set flag `full` to get verbose information, at least one <app_id> should be provided
-          You can also use pattern like <app_id_keyword>$ to match all apps whose id endswith <app_id_keyword>, or ^<app_id_keyword> to match all apps whose id starts with <app_id_keyword>
+    DESC: Display detail information for provided apps. Set flag `full` to get verbose information, at least one <pattern> should be provided
     """
 
     name = 'appinfo'
