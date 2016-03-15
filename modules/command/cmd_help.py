@@ -15,7 +15,7 @@ _all_commands = [ShCommand, AppsCommand, ConfigCommand, ShareCommand, AppInfoCom
 
 class HelpCommand(Command):
     """
-    NAME: help - get help info for specified command 
+    NAME: help(h, he, hel) - get help info for specified command
 
     SYNOPSIS: help <command>
 

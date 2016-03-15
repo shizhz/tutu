@@ -73,7 +73,7 @@ class AppsCommandParser(object):
 
 class AppInfoCommand(Command):
     """
-    NAME: appinfo
+    NAME: appinfo(ai)
 
     SYNOPSIS: appinfo <pattern> <pattern> <full>
 

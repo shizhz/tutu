@@ -9,7 +9,7 @@ logger = logging.getLogger('tutu.modules.command.' + __name__)
 
 class ConfigCommand(Command):
     """
-    NAME: configs
+    NAME: configs(cf)
 
     SYNOPSIS: configs
 
